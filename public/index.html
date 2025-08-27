@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>TransparenciaCiudadana - Reporte</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 2rem auto; padding: 1rem; }
+    label { display:block; margin-top: .5rem; }
+    input, textarea { width:100%; padding:.5rem; margin-top:.25rem; }
+    button { margin-top:1rem; padding:.6rem 1rem; }
+    .result { margin-top:1rem; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <h1>TransparenciaCiudadana — Reporte ciudadano</h1>
+  <form id="reportForm">
+    <label>Nombre2
+      <input name="user_name" required />
+    </label>
+    <label>Correo
+      <input name="user_email" type="email" required />
+    </label>
+    <label>Teléfono (WhatsApp)
+      <input name="user_phone" required />
+    </label>
+    <label>Tipo de servicio
+      <input name="service_type" required />
+    </label>
+    <label>Descripción
+      <textarea name="description" rows="4" required></textarea>
+    </label>
+    <label>Latitud
+      <input name="latitude" />
+    </label>
+    <label>Longitud
+      <input name="longitude" />
+    </label>
+    <button type="submit">Enviar reporte</button>
+  </form>
+  <div class="result" id="result"></div>
+
+<script>
+const form = document.getElementById('reportForm');
+const result = document.getElementById('result');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form).entries());
+  try {
+    // Corregir ruta - subir un nivel desde public/ hacia api/
+    const resp = await fetch('../api/save_report.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    
+    if (!resp.ok) {
+      throw new Error(`HTTP error! status: ${resp.status}`);
+    }
+    
+    const json = await resp.json();
+    if (json.ok) {
+      result.textContent = 'Reporte enviado. ID: ' + json.id;
+      form.reset();
+    } else {
+      result.textContent = 'Error: ' + (json.error || JSON.stringify(json));
+    }
+  } catch (err) {
+    result.textContent = 'Error de conexión: ' + err.message;
+    console.error('Error:', err);
+  }
+});
+</script>
+</body>
+</html>
