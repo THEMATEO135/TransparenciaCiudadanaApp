@@ -38,17 +38,15 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             line-height: 1.6;
+            padding: 1rem;
         }
 
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 1fr 500px;
-            gap: 3rem;
-            align-items: start;
-            min-height: calc(100vh - 4rem);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
         /* Header Section */
@@ -56,50 +54,49 @@
             background: var(--white);
             border-radius: var(--border-radius-large);
             box-shadow: var(--shadow-medium);
-            padding: 3rem;
-            position: sticky;
-            top: 2rem;
+            padding: 2rem;
+            order: 1;
         }
 
         .logo-container {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .logo {
-            max-width: 200px;
+            max-width: 160px;
             height: auto;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
         }
 
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--secondary-color);
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             line-height: 1.2;
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: var(--dark-gray);
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             font-weight: 400;
         }
 
         .services-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .service-card {
             background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
             border-radius: var(--border-radius);
-            padding: 1.5rem;
+            padding: 1.2rem;
             text-align: center;
             transition: var(--transition);
             border: 2px solid transparent;
@@ -120,8 +117,8 @@
         }
 
         .service-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
             display: block;
         }
 
@@ -135,7 +132,7 @@
         .service-title {
             font-weight: 600;
             color: var(--secondary-color);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
 
         .service-card.selected .service-title {
@@ -145,10 +142,10 @@
         .cta-text {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: var(--white);
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: var(--border-radius);
             text-align: center;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
             box-shadow: var(--shadow-light);
         }
@@ -159,37 +156,34 @@
             border-radius: var(--border-radius-large);
             box-shadow: var(--shadow-heavy);
             overflow: hidden;
-            position: sticky;
-            top: 2rem;
+            order: 2;
         }
 
         .form-header {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: var(--white);
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
         }
 
         .form-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
 
         .form-subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem;
             opacity: 0.9;
             font-weight: 400;
         }
 
         .form-content {
-            padding: 2.5rem;
-            max-height: 70vh;
-            overflow-y: auto;
+            padding: 2rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             position: relative;
         }
 
@@ -204,25 +198,30 @@
             font-weight: 600;
             color: var(--secondary-color);
             margin-bottom: 0.5rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .form-control, .form-select {
             width: 100%;
-            padding: 1rem 1.2rem;
+            padding: 0.8rem 1rem;
             border: 2px solid var(--medium-gray);
             border-radius: var(--border-radius);
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: var(--transition);
             background-color: var(--white);
+        }
+
+        .form-control:disabled, .form-select:disabled {
+            background-color: var(--light-gray);
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .form-control:focus, .form-select:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
-            transform: translateY(-1px);
         }
 
         .form-control::placeholder {
@@ -232,7 +231,7 @@
 
         .form-textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 90px;
         }
 
         .input-icon {
@@ -252,8 +251,8 @@
         .location-section {
             background: var(--light-gray);
             border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
         }
 
         .location-header {
@@ -266,30 +265,34 @@
         .location-title {
             font-weight: 600;
             color: var(--secondary-color);
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .get-location-btn {
             background: var(--accent-color);
             color: var(--white);
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.8rem;
             border-radius: var(--border-radius);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
-        .get-location-btn:hover {
+        .get-location-btn:disabled {
+            background: var(--dark-gray);
+            cursor: not-allowed;
+        }
+
+        .get-location-btn:hover:not(:disabled) {
             background: #2980b9;
-            transform: translateY(-1px);
         }
 
         .location-status {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--dark-gray);
             margin-top: 0.5rem;
             display: flex;
@@ -298,7 +301,7 @@
         }
 
         .submit-container {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             text-align: center;
         }
 
@@ -306,9 +309,9 @@
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: var(--white);
             border: none;
-            padding: 1.2rem 3rem;
+            padding: 1rem 2.5rem;
             border-radius: var(--border-radius-large);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -318,18 +321,18 @@
             width: 100%;
         }
 
-        .submit-btn:hover {
+        .submit-btn:disabled {
+            background: var(--dark-gray);
+            cursor: not-allowed;
+        }
+
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
         }
 
-        .submit-btn:active {
+        .submit-btn:active:not(:disabled) {
             transform: translateY(0);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
         }
 
         .submit-btn::before {
@@ -343,19 +346,20 @@
             transition: left 0.5s;
         }
 
-        .submit-btn:hover::before {
+        .submit-btn:hover:not(:disabled)::before {
             left: 100%;
         }
 
         /* Result Messages */
         .result-message {
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: var(--border-radius);
             text-align: center;
             margin-top: 1rem;
             opacity: 0;
             transform: translateY(20px);
             transition: var(--transition);
+            font-size: 0.9rem;
         }
 
         .result-message.show {
@@ -399,41 +403,107 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 1024px) {
+        @media (min-width: 992px) {
             .main-container {
-                grid-template-columns: 1fr;
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
                 gap: 2rem;
-                padding: 1rem;
             }
             
-            .header-section,
-            .form-container {
-                position: static;
+            .header-section {
+                order: 1;
+                position: sticky;
+                top: 2rem;
             }
-
-            .form-row {
-                grid-template-columns: 1fr;
+            
+            .form-container {
+                order: 2;
             }
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .header-section,
+            .form-container {
+                border-radius: 16px;
+            }
+            
             .hero-title {
-                font-size: 2rem;
+                font-size: 1.7rem;
             }
             
             .services-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 0.8rem;
             }
             
             .form-content {
                 padding: 1.5rem;
             }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .location-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            
+            .get-location-btn {
+                align-self: stretch;
+                justify-content: center;
+            }
+            
+            .service-card {
+                padding: 1rem;
+            }
+            
+            .service-icon {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-section,
+            .form-content {
+                padding: 1.2rem;
+            }
+            
+            .form-header {
+                padding: 1.2rem;
+            }
+            
+            .hero-title {
+                font-size: 1.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .form-title {
+                font-size: 1.3rem;
+            }
+            
+            .form-subtitle {
+                font-size: 0.85rem;
+            }
+            
+            .cta-text {
+                font-size: 1rem;
+                padding: 1rem;
+            }
         }
 
         /* Custom Scrollbar */
         .form-content::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         .form-content::-webkit-scrollbar-track {
@@ -448,6 +518,31 @@
         .form-content::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
         }
+
+        /* Service selection prompt */
+        .service-prompt {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: rgba(255, 102, 0, 0.1);
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .service-prompt i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .service-prompt p {
+            margin: 0;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
     </style>
 </head>
 <body>
@@ -456,7 +551,7 @@
         <div class="header-section">
             <div class="logo-container">
                 <!-- Placeholder for logo - replace with actual logo -->
-                <div style="width: 200px; height: 60px; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; margin: 0 auto;">
+                <div style="width: 160px; height: 50px; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.1rem; margin: 0 auto;">
                     COMPENSAR
                 </div>
             </div>
@@ -464,7 +559,7 @@
             <h1 class="hero-title">¿Tienes problemas con alguno de estos servicios?</h1>
             <p class="hero-subtitle">Reporta fallas de manera rápida y sencilla en nuestros servicios principales</p>
             
-              <div class="services-grid">
+            <div class="services-grid">
                 <div class="service-card" onclick="selectService('energia')">
                     <i class="fas fa-bolt service-icon"></i>
                     <div class="service-title">Energía Eléctrica</div>
@@ -483,7 +578,6 @@
                 </div>
             </div>
             
-            
             <div class="cta-text">
                 <i class="fas fa-headset" style="margin-right: 0.5rem;"></i>
                 ¡Estamos aquí para ayudarte las 24 horas!
@@ -498,13 +592,18 @@
             </div>
             
             <div class="form-content">
+                <div class="service-prompt" id="servicePrompt">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Por favor, selecciona un servicio arriba para habilitar el formulario</p>
+                </div>
+                
                 <form id="reportForm">
                     <div class="form-group has-icon">
                         <label for="user_name" class="form-label">
                             <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                             Nombres y Apellidos *
                         </label>
-                        <input type="text" class="form-control" id="user_name" name="user_name" placeholder="Ingresa tu nombre completo" required>
+                        <input type="text" class="form-control" id="user_name" name="user_name" placeholder="Ingresa tu nombre completo" required disabled>
                         <i class="fas fa-user input-icon"></i>
                     </div>
 
@@ -513,7 +612,7 @@
                             <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                             Correo Electrónico *
                         </label>
-                        <input type="email" class="form-control" id="user_email" name="user_email" placeholder="ejemplo@correo.com" required>
+                        <input type="email" class="form-control" id="user_email" name="user_email" placeholder="ejemplo@correo.com" required disabled>
                         <i class="fas fa-envelope input-icon"></i>
                     </div>
 
@@ -522,18 +621,16 @@
                             <i class="fas fa-phone" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                             Teléfono/WhatsApp *
                         </label>
-                        <input type="tel" class="form-control" id="user_phone" name="user_phone" placeholder="+57 300 123 4567" required>
+                        <input type="tel" class="form-control" id="user_phone" name="user_phone" placeholder="+57 300 123 4567" required disabled>
                         <i class="fas fa-phone input-icon"></i>
                     </div>
 
-                  
-
- <div class="form-group">
+                    <div class="form-group">
                         <label for="serviceType" class="form-label">
                             <i class="fas fa-cogs" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                             Tipo de Servicio *
                         </label>
-                        <select class="form-select" id="serviceType" required>
+                        <select class="form-select" id="serviceType" name="serviceType" required disabled>
                             <option value="">Selecciona el servicio afectado</option>
                             <option value="energia">⚡ Energía Eléctrica</option>
                             <option value="internet">📶 Internet</option>
@@ -547,17 +644,43 @@
                             <i class="fas fa-comment-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                             Descripción del Problema *
                         </label>
-                        <textarea class="form-control form-textarea" id="description" name="description" rows="4" 
-                                placeholder="Describe detalladamente el problema que estás experimentando. Incluye información como: cuándo comenzó, qué síntomas observas, ubicación exacta, etc." required></textarea>
+                        <textarea class="form-control form-textarea" id="description" name="description" rows="3" 
+                                placeholder="Describe detalladamente el problema que estás experimentando. Incluye información como: cuándo comenzó, qué síntomas observas, ubicación exacta, etc." required disabled></textarea>
+                    </div>
+                    
+                    <!-- Dirección y División Política de Bogotá -->
+                    <div class="form-group has-icon">
+                        <label for="direccion" class="form-label">
+                            <i class="fas fa-location-dot" style="margin-right: .5rem; color: var(--primary-color);"></i>
+                            Dirección (opcional)
+                        </label>
+                        <input type="text" class="form-control" id="direccion" name="direccion"
+                                placeholder="Calle 26 # 68D-21, apto 301" disabled>
+                        <i class="fas fa-map-marker-alt input-icon"></i>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="localidad" class="form-label">Localidad de Bogotá</label>
+                            <select class="form-select" id="localidad" name="localidad" disabled>
+                                <option value="">Selecciona una localidad</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="barrio" class="form-label">Barrio</label>
+                            <select class="form-select" id="barrio" name="barrio" disabled>
+                                <option value="">Selecciona un barrio</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="location-section">
                         <div class="location-header">
                             <span class="location-title">
                                 <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
                                 Ubicación (Opcional)
                             </span>
-                            <button type="button" class="get-location-btn" onclick="getCurrentLocation()">
+                            <button type="button" class="get-location-btn" id="getLocationBtn" onclick="getCurrentLocation(event)" disabled>
                                 <i class="fas fa-crosshairs"></i>
                                 Obtener ubicación
                             </button>
@@ -566,11 +689,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="latitude" class="form-label">Latitud</label>
-                                <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Auto-detectar" readonly>
+                                <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Auto-detectar" readonly disabled>
                             </div>
                             <div class="form-group">
                                 <label for="longitude" class="form-label">Longitud</label>
-                                <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Auto-detectar" readonly>
+                                <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Auto-detectar" readonly disabled>
                             </div>
                         </div>
                         
@@ -581,7 +704,7 @@
                     </div>
 
                     <div class="submit-container">
-                        <button type="submit" class="submit-btn" id="submitBtn">
+                        <button type="submit" class="submit-btn" id="submitBtn" disabled>
                             <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
                             Enviar Reporte
                         </button>
@@ -593,14 +716,196 @@
     </div>
 
     <script>
+        // El código JavaScript con las nuevas funcionalidades
         const form = document.getElementById('reportForm');
         const result = document.getElementById('result');
         const submitBtn = document.getElementById('submitBtn');
         const locationStatus = document.getElementById('locationStatus');
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const servicePrompt = document.getElementById('servicePrompt');
+        let serviceSelected = false;
+        
+        // Deshabilitar todos los controles al inicio
+        function disableFormControls() {
+            const formControls = form.querySelectorAll('input, textarea, select, button');
+            formControls.forEach(control => {
+                if (control.id !== 'submitBtn' && control.id !== 'getLocationBtn') {
+                    control.disabled = true;
+                }
+            });
+            submitBtn.disabled = true;
+            getLocationBtn.disabled = true;
+            servicePrompt.style.display = 'flex';
+        }
+        
+        // Habilitar todos los controles
+        function enableFormControls() {
+            const formControls = form.querySelectorAll('input, textarea, select, button');
+            formControls.forEach(control => {
+                control.disabled = false;
+            });
+            document.getElementById('latitude').disabled = true;
+            document.getElementById('longitude').disabled = true;
+            servicePrompt.style.display = 'none';
+            serviceSelected = true;
+            
+            // Hacer scroll al formulario en dispositivos móviles
+            if (window.innerWidth < 992) {
+                form.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Poner foco en el primer campo
+            document.getElementById('user_name').focus();
+        }
+        
+        // Inicializar con controles deshabilitados
+        disableFormControls();
+        
+ const BARRIOS_URL = 'https://serviciosgis.catastrobogota.gov.co/arcgis/rest/services/ordenamientoterritorial/entidadterritorial/MapServer/0/query';
+
+// Carga de Localidades (valores distintos) - Versión corregida
+async function cargarLocalidades() {
+    try {
+        // Consulta mejorada para obtener localidades
+        const queryParams = new URLSearchParams({
+            where: '1=1',
+            outFields: 'LOCALIDAD',
+            returnDistinctValues: 'true',
+            orderByFields: 'LOCALIDAD',
+            f: 'json',
+            outSR: '4326'
+        });
+        
+        const res = await fetch(`${BARRIOS_URL}?${queryParams}`);
+        
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+        
+        const json = await res.json();
+        const selLoc = document.getElementById('localidad');
+        selLoc.innerHTML = '<option value="">Selecciona una localidad</option>';
+
+        // Verificar si hay datos y features
+        if (json && json.features && json.features.length > 0) {
+            // Extraer y ordenar localidades
+            const localidades = json.features
+                .map(f => f.attributes?.LOCALIDAD)
+                .filter(loc => loc && loc.trim() !== '')
+                .sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
+            
+            // Eliminar duplicados
+            const localidadesUnicas = [...new Set(localidades)];
+            
+            // Llenar el selector
+            localidadesUnicas.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc;
+                opt.textContent = loc;
+                selLoc.appendChild(opt);
+            });
+        } else {
+            console.warn('No se encontraron localidades en la respuesta:', json);
+            // Opción alternativa con localidades predefinidas
+            const localidadesPredefinidas = [
+                "USAQUÉN", "CHAPINERO", "SANTA FE", "SAN CRISTÓBAL", 
+                "USME", "TUNJUELITO", "BOSA", "KENNEDY", "FONTIBÓN", 
+                "ENGATIVÁ", "SUBA", "BARRIOS UNIDOS", "TEUSAQUILLO", 
+                "LOS MÁRTIRES", "ANTONIO NARIÑO", "PUENTE ARANDA", 
+                "LA CANDELARIA", "RAFAEL URIBE URIBE", "CIUDAD BOLÍVAR", 
+                "SUMAPAZ"
+            ];
+            
+            localidadesPredefinidas.forEach(loc => {
+                const opt = document.createElement('option');
+                opt.value = loc;
+                opt.textContent = loc;
+                selLoc.appendChild(opt);
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando localidades:', error);
+        const selLoc = document.getElementById('localidad');
+        selLoc.innerHTML = '<option value="">Error cargando localidades</option>';
+    }
+}
+
+// Carga de Barrios por Localidad (valores distintos) - Versión corregida
+async function cargarBarriosPorLocalidad(localidad) {
+    try {
+        const selBar = document.getElementById('barrio');
+        selBar.disabled = true;
+        selBar.innerHTML = '<option value="">Cargando barrios...</option>';
+        
+        // Consulta para obtener barrios de la localidad seleccionada
+        const whereClause = encodeURIComponent(`LOCALIDAD = '${localidad.replace(/'/g, "''")}'`);
+        const queryParams = new URLSearchParams({
+            where: whereClause,
+            outFields: 'BARRIOCOMU',
+            returnDistinctValues: 'true',
+            orderByFields: 'BARRIOCOMU',
+            f: 'json',
+            outSR: '4326'
+        });
+        
+        const res = await fetch(`${BARRIOS_URL}?${queryParams}`);
+        
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+        
+        const json = await res.json();
+        selBar.innerHTML = '<option value="">Selecciona un barrio</option>';
+
+        // Verificar si hay datos y features
+        if (json && json.features && json.features.length > 0) {
+            // Extraer y ordenar barrios
+            const barrios = json.features
+                .map(f => f.attributes?.BARRIOCOMU)
+                .filter(barrio => barrio && barrio.trim() !== '')
+                .sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
+            
+            // Eliminar duplicados
+            const barriosUnicos = [...new Set(barrios)];
+            
+            // Llenar el selector
+            barriosUnicos.forEach(barrio => {
+                const opt = document.createElement('option');
+                opt.value = barrio;
+                opt.textContent = barrio;
+                selBar.appendChild(opt);
+            });
+        } else {
+            console.warn('No se encontraron barrios para la localidad:', localidad, json);
+            selBar.innerHTML = '<option value="">No se encontraron barrios</option>';
+        }
+        
+        selBar.disabled = false;
+    } catch (error) {
+        console.error('Error cargando barrios:', error);
+        const selBar = document.getElementById('barrio');
+        selBar.innerHTML = '<option value="">Error cargando barrios</option>';
+        selBar.disabled = false;
+    }
+}
+
+// Listeners - Mantener estos igual
+document.addEventListener('DOMContentLoaded', cargarLocalidades);
+
+document.getElementById('localidad').addEventListener('change', (e) => {
+    const loc = e.target.value;
+    if (loc) {
+        cargarBarriosPorLocalidad(loc);
+    } else {
+        const selBar = document.getElementById('barrio');
+        selBar.innerHTML = '<option value="">Selecciona un barrio</option>';
+        selBar.disabled = true;
+    }
+});
 
         // Service selection functionality
         function selectService(serviceType) {
-            const serviceInput = document.getElementById('service_type');
+            const serviceInput = document.getElementById('serviceType');
             serviceInput.value = serviceType;
             
             // Update visual feedback
@@ -609,71 +914,91 @@
             });
             
             event.target.closest('.service-card').classList.add('selected');
+            
+            // Habilitar formulario
+            if (!serviceSelected) {
+                enableFormControls();
+            }
         }
 
         // Geolocation functionality
-        function getCurrentLocation() {
-            const btn = event.target.closest('.get-location-btn');
-            const originalContent = btn.innerHTML;
+        function getCurrentLocation(evt) {
+            if (!serviceSelected) return;
             
+            const btn = evt?.currentTarget || evt?.target || document.querySelector('.get-location-btn');
+            const originalContent = btn.innerHTML;
+
+            // HTTPS requerido en la mayoría de navegadores para Geolocation
+            if (!window.isSecureContext && location.hostname !== 'localhost') {
+                locationStatus.innerHTML = '<i class="fas fa-lock"></i> Activa HTTPS (o prueba en localhost) para usar geolocalización.';
+                locationStatus.style.color = 'var(--danger-color)';
+                return;
+            }
+
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo...';
             btn.disabled = true;
-            
+
             locationStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo ubicación...';
             locationStatus.style.color = 'var(--primary-color)';
-            
+
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 15000,        // evita quedarse colgado
+                maximumAge: 300000     // acepta caché reciente (5 min) para ser más rápido
+            };
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                    function (position) {
+                        document.getElementById('latitude').value  = position.coords.latitude.toFixed(6);
                         document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
-                        
+                        // (Opcional) Reverse geocoding con Nominatim (OSM)
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
+                            .then(r => r.json())
+                            .then(d => {
+                                if (d && d.display_name) {
+                                    const dir = document.getElementById('direccion');
+                                    if (dir && !dir.value) dir.value = d.display_name;
+                                }
+                            })
+                            .catch(()=>{});
                         btn.innerHTML = '<i class="fas fa-check"></i> Ubicación obtenida';
                         btn.style.background = 'var(--success-color)';
-                        
+
                         locationStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ubicación obtenida correctamente';
                         locationStatus.style.color = 'var(--success-color)';
-                        
+
                         setTimeout(() => {
                             btn.innerHTML = originalContent;
                             btn.style.background = 'var(--accent-color)';
                             btn.disabled = false;
                         }, 2000);
                     },
-                    function(error) {
+                    function (error) {
                         let errorMessage = 'Error al obtener ubicación';
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage = 'Permiso denegado para acceder a la ubicación';
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = 'Ubicación no disponible';
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = 'Tiempo de espera agotado';
-                                break;
-                        }
-                        
+                        if (error.code === error.PERMISSION_DENIED)  errorMessage = 'Permiso denegado para acceder a la ubicación';
+                        if (error.code === error.POSITION_UNAVAILABLE) errorMessage = 'Ubicación no disponible';
+                        if (error.code === error.TIMEOUT)             errorMessage = 'Tiempo de espera agotado';
+
                         btn.innerHTML = '<i class="fas fa-times"></i> Error';
                         btn.style.background = 'var(--danger-color)';
-                        
+
                         locationStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + errorMessage;
                         locationStatus.style.color = 'var(--danger-color)';
-                        
+
                         setTimeout(() => {
                             btn.innerHTML = originalContent;
                             btn.style.background = 'var(--accent-color)';
                             btn.disabled = false;
                         }, 3000);
-                    }
+                    },
+                    options
                 );
             } else {
                 btn.innerHTML = '<i class="fas fa-times"></i> No compatible';
                 btn.style.background = 'var(--danger-color)';
-                
                 locationStatus.innerHTML = '<i class="fas fa-times-circle"></i> Geolocalización no soportada';
                 locationStatus.style.color = 'var(--danger-color)';
-                
                 setTimeout(() => {
                     btn.innerHTML = originalContent;
                     btn.style.background = 'var(--accent-color)';
@@ -725,6 +1050,8 @@
                         });
                         locationStatus.innerHTML = '<i class="fas fa-info-circle"></i> Presiona "Obtener ubicación" para incluir tu ubicación actual';
                         locationStatus.style.color = 'var(--dark-gray)';
+                        disableFormControls();
+                        serviceSelected = false;
                     }, 5000);
                 } else {
                     result.textContent = 'Error al enviar el reporte: ' + (json.error || JSON.stringify(json));
