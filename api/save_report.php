@@ -129,6 +129,7 @@ try {
             'error' => $err ?: null
         ]
     ]);
+    
 
 } catch (PDOException $e) {
     if (isset($pdo)) {

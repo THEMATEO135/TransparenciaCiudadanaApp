@@ -685,6 +685,8 @@
                                 Obtener ubicación
                             </button>
                         </div>
+
+                        
                         
                         <div class="form-row">
                             <div class="form-group">
@@ -882,7 +884,7 @@ async function cargarBarriosPorLocalidad(localidad) {
         
         selBar.disabled = false;
     } catch (error) {
-        console.error('Error cargando barrios:', error);
+        console.error('Error cargando los barrios:', error);
         const selBar = document.getElementById('barrio');
         selBar.innerHTML = '<option value="">Error cargando barrios</option>';
         selBar.disabled = false;
