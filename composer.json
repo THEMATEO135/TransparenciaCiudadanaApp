@@ -1,0 +1,12 @@
+{
+    "name": "transparencia/ciudadana",
+    "description": "Proyecto refactorizado MVC con PostgreSQL",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "php": ">=7.4"
+    }
+}
