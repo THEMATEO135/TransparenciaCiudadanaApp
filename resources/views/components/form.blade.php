@@ -1,0 +1,1 @@
+<form method="POST" action="/reportar">@csrf<input name="nombres" required><input name="correo" required><input name="telefono" required><select name="servicio_id"></select><textarea name="descripcion"></textarea><button type="submit">Enviar</button></form>
