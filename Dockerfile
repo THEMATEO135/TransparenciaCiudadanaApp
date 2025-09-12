@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     sqlite3 \
     unzip \
     git \
+    tree \
     && docker-php-ext-install pdo pdo_sqlite
 
 # Instalar Composer
@@ -31,8 +32,10 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Instalar dependencias de Laravel (sin dev)
 RUN composer install --no-dev --optimize-autoloader
-RUN ls -l /opt/render/project/src/database/
-RUN echo "📂 Directorios en /opt/render/project/src:" && ls -l /opt/render/project/src
+
+# Debug: mostrar estructura de carpetas
+RUN echo "📂 Árbol de directorios del proyecto:" && tree -L 3 /var/www/html || true
+RUN echo "📂 Directorios en /opt/render/project/src:" && ls -l /opt/render/project/src || true
 RUN echo "📂 Directorios en /opt/render/project/src/database:" && ls -l /opt/render/project/src/database || echo "⚠️ database no existe"
 RUN echo "📂 Directorios en /opt/render/project/src/storage:" && ls -l /opt/render/project/src/storage || echo "⚠️ storage no existe"
 
