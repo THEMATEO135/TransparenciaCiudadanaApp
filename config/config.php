@@ -18,7 +18,7 @@ return [
     // Configuración para integración con n8n
     'n8n' => [
         // URL del webhook (puedes cambiarla con variable de entorno)
-        'webhook_url' => getenv('N8N_WEBHOOK_URL') ?: 'https://primary-production-c6f0f.up.railway.app/webhook-test/transparencia_webhook',
+        'webhook_url' => getenv('N8N_WEBHOOK_URL') ?: 'https://primary-production-c6f0f.up.railway.app/webhook/transparencia_webhook',
         // Tiempo de espera para las peticiones cURL a n8n
         'timeout' => getenv('N8N_TIMEOUT') ?: 10,
     ]

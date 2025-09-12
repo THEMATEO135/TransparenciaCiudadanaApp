@@ -86,7 +86,7 @@ class ReporteController extends Controller
     private function sendWebhook($payload)
     {
         // URL del webhook desde el .env
-        $webhookUrl = env('WEBHOOK_URL', 'https://primary-production-c6f0f.up.railway.app/webhook-test/transparencia_webhook');
+        $webhookUrl = env('WEBHOOK_URL', 'https://primary-production-c6f0f.up.railway.app/webhook/transparencia_webhook');
         
         if (empty($webhookUrl)) {
             Log::warning('WEBHOOK_URL no está configurada en el .env');

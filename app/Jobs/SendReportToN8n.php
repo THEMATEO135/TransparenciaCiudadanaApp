@@ -25,7 +25,7 @@ class SendReportToN8n implements ShouldQueue
     {
         try {
             Http::timeout(10)
-                ->post('https://primary-production-c6f0f.up.railway.app/webhook-test/transparencia_webhook', $this->reportData);
+                ->post('https://primary-production-c6f0f.up.railway.app/webhook/transparencia_webhook', $this->reportData);
         } catch (\Exception $e) {
             Log::error('Job: Error enviando webhook a n8n: ' . $e->getMessage());
             // Este job se reintentará automáticamente (configurable)
