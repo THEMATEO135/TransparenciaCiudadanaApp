@@ -19,40 +19,40 @@ RUN apt-get update && apt-get install -y \
 # Instala extensiones de PHP necesarias para Laravel
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install mbstring \
-    && docker-php-ext-install xml \
-    && docker-php-ext-install zip \
-    && docker-php-ext-install exif \
-    && docker-php-ext-install pcntl \
-    && docker-php-ext-install bcmath
+    pdo_mysql \
+    mbstring \
+    xml \
+    zip \
+    exif \
+    pcntl \
+    bcmath
 
-# Habilita mod_rewrite de Apache
-RUN a2enmod rewrite
+# Habilita mod_rewrite de Apache y configura el DocumentRoot
+RUN a2enmod rewrite && \
+    sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
+    sed -i 's!AllowOverride None!AllowOverride All!g' /etc/apache2/sites-available/000-default.conf
 
 # Configura el directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia el archivo de configuración de Apache
-COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia los archivos de configuración de Composer primero
+# Copia solo los archivos necesarios para composer install primero
 COPY composer.json composer.lock* ./
 
-# Instala las dependencias de Composer (sin dev para producción)
+# Crea directorios necesarios para evitar errores de autoload
+RUN mkdir -p database/seeders database/factories app/Models
+
+# Instala las dependencias de Composer
 RUN composer install --no-dev --no-interaction --optimize-autoloader --no-progress
 
-# Copia todo el código de la aplicación
+# Copia TODO el resto del código de la aplicación
 COPY . .
 
 # Ajusta los permisos de los directorios de Laravel
-RUN chown -R www-data:www-data /var/www/html/storage \
-    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 # Expone el puerto 80
 EXPOSE 80
