@@ -1,20 +1,31 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+# Imagen base con PHP 8 y extensiones necesarias
+FROM php:8.2-apache
 
-COPY . .
+# Instalar extensiones necesarias
+RUN apt-get update && apt-get install -y \
+    libsqlite3-dev \
+    sqlite3 \
+    unzip \
+    git \
+    && docker-php-ext-install pdo pdo_sqlite
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Copiar proyecto
+COPY . /var/www/html
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Configurar permisos
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Configurar Apache
+RUN a2enmod rewrite
 
-CMD ["/start.sh"]
+# Instalar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-dev --optimize-autoloader
+
+# Cachear config de Laravel
+RUN php artisan config:cache && php artisan route:cache
+
+# Exponer puerto que usa Render
+EXPOSE 10000
+CMD ["apache2-foreground"]
