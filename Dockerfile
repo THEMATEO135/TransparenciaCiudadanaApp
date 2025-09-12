@@ -1,55 +1,20 @@
-# Usa la imagen oficial de PHP 8.4 con Apache
-FROM php:8.4-apache
+FROM richarvey/nginx-php-fpm:3.1.6
 
-# Instala dependencias del sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Instala extensiones de PHP necesarias para Laravel
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    pdo_mysql \
-    mbstring \
-    xml \
-    zip \
-    exif \
-    pcntl \
-    bcmath
-
-# Habilita mod_rewrite de Apache y configura el DocumentRoot
-RUN a2enmod rewrite && \
-    sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
-    sed -i 's!AllowOverride None!AllowOverride All!g' /etc/apache2/sites-available/000-default.conf
-
-# Configura el directorio de trabajo
-WORKDIR /var/www/html
-
-# Instala Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copia TODO el código primero
 COPY . .
 
-# Instala las dependencias de Composer (TODO en un solo paso)
-RUN composer install --no-dev --no-interaction --optimize-autoloader --no-progress
+# Image config
+ENV SKIP_COMPOSER 1
+ENV WEBROOT /var/www/html/public
+ENV PHP_ERRORS_STDERR 1
+ENV RUN_SCRIPTS 1
+ENV REAL_IP_HEADER 1
 
-# Ajusta los permisos de los directorios de Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Laravel config
+ENV APP_ENV production
+ENV APP_DEBUG false
+ENV LOG_CHANNEL stderr
 
-# Expone el puerto 80
-EXPOSE 80
+# Allow composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Comando por defecto
-CMD ["apache2-foreground"]
+CMD ["/start.sh"]
