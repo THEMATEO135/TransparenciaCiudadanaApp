@@ -12,14 +12,14 @@ RUN apt-get update && apt-get install -y \
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Copiar el proyecto Laravel
+COPY . /var/www/html
+
 # Configurar Apache para usar public/ de Laravel
 RUN sed -i 's#/var/www/html#/var/www/html/public#' /etc/apache2/sites-available/000-default.conf \
     && sed -i 's#/var/www/html#/var/www/html/public#' /etc/apache2/apache2.conf \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf \
     && a2enmod rewrite
-
-# Copiar el proyecto Laravel
-COPY . /var/www/html
 
 # Definir el directorio de trabajo
 WORKDIR /var/www/html
@@ -30,12 +30,10 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Instalar dependencias de Laravel (sin dev)
-RUN composer install --no-dev --optimize-autoloader \
-    && php artisan config:cache \
-    && php artisan route:cache
+RUN composer install --no-dev --optimize-autoloader
 
-# Exponer el puerto que Render usa
-EXPOSE 10000
+# Exponer el puerto correcto
+EXPOSE 80
 
 # Ejecutar Apache en primer plano
 CMD ["apache2-foreground"]
