@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tu CSS personalizado -->
-    <link href="{{ asset('css/transparencia.css') }}" rel="stylesheet">
+   <link rel="stylesheet" href="{{ asset('css/transparencia.css') }}">
+
 </head>
 <body>
     <div class="main-container">
@@ -178,6 +179,8 @@
     </div>
 
     <!-- Tus scripts -->
-    <script src="{{ asset('js/reporte.js') }}"></script>
+
+<script src="{{ asset('js/reporte.js') }}"></script>
+
 </body>
 </html>

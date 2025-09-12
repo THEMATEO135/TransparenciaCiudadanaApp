@@ -13,8 +13,13 @@ return new class extends Migration
             $table->string('nombres');
             $table->string('correo');
             $table->string('telefono');
-            $table->foreignId('servicio_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('servicio_id');
             $table->text('descripcion');
+            $table->string('direccion')->nullable();
+            $table->string('localidad')->nullable();
+            $table->string('barrio')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->timestamps();
         });
     }

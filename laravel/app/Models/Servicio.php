@@ -10,4 +10,9 @@ class Servicio extends Model
     use HasFactory;
 
     protected $fillable = ['nombre'];
+
+    public function reportes()
+    {
+        return $this->hasMany(Reporte::class);
+    }
 }

@@ -10,6 +10,27 @@ class Reporte extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nombres', 'correo', 'telefono', 'cedula', 'servicio_id', 'descripcion', 'direccion', 'barrio', 'localidad', 'latitud', 'longitud', 'estado'
+        'nombres',
+        'correo',
+        'telefono',
+        'servicio_id',
+        'descripcion',
+        'direccion',
+        'localidad',
+        'barrio',
+        'latitude',
+        'longitude'
     ];
+
+    protected $casts = [
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+        'servicio_id' => 'integer'
+    ];
+
+    // Relación con servicios
+    public function servicio()
+    {
+        return $this->belongsTo(Servicio::class);
+    }
 }
