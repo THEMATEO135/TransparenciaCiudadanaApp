@@ -38,20 +38,11 @@ WORKDIR /var/www/html
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia solo los archivos necesarios para composer install primero
-COPY composer.json composer.lock* ./
-
-# Crea directorios necesarios para evitar errores de autoload
-RUN mkdir -p database/seeders database/factories app/Models
-
-# Instala las dependencias de Composer SIN ejecutar scripts
-RUN composer install --no-dev --no-interaction --optimize-autoloader --no-progress --no-scripts
-
-# Copia TODO el resto del código de la aplicación
+# Copia TODO el código primero
 COPY . .
 
-# Ahora ejecuta los scripts de Composer con el código completo
-RUN composer run-script post-autoload-dump
+# Instala las dependencias de Composer (TODO en un solo paso)
+RUN composer install --no-dev --no-interaction --optimize-autoloader --no-progress
 
 # Ajusta los permisos de los directorios de Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
