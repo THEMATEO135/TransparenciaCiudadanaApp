@@ -44,11 +44,14 @@ COPY composer.json composer.lock* ./
 # Crea directorios necesarios para evitar errores de autoload
 RUN mkdir -p database/seeders database/factories app/Models
 
-# Instala las dependencias de Composer
-RUN composer install --no-dev --no-interaction --optimize-autoloader --no-progress
+# Instala las dependencias de Composer SIN ejecutar scripts
+RUN composer install --no-dev --no-interaction --optimize-autoloader --no-progress --no-scripts
 
 # Copia TODO el resto del código de la aplicación
 COPY . .
+
+# Ahora ejecuta los scripts de Composer con el código completo
+RUN composer run-script post-autoload-dump
 
 # Ajusta los permisos de los directorios de Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache \
