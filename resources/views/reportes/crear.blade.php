@@ -87,7 +87,7 @@
                             <i class="fas fa-phone" style="margin-right: 0.5rem; color: #ff6600;"></i>
                             Teléfono/WhatsApp *
                         </label>
-                        <input type="tel" class="form-control" id="telefono" name="telefono" placeholder="+57 300 123 4567" required disabled>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" required disabled>
                         <i class="fas fa-phone input-icon"></i>
                     </div>
 

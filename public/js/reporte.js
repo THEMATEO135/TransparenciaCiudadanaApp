@@ -389,23 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Phone formatting
-    const phoneInput = document.getElementById('telefono');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                if (value.length <= 3) {
-                    value = `+57 ${value}`;
-                } else if (value.length <= 6) {
-                    value = `+57 ${value.slice(0, 3)} ${value.slice(3)}`;
-                } else {
-                    value = `+57 ${value.slice(0, 3)} ${value.slice(3, 6)} ${value.slice(6, 10)}`;
-                }
-            }
-            e.target.value = value;
-        });
-    }
+
 
     // Enhanced form interactions
     document.querySelectorAll('.form-control, .form-select').forEach(input => {
