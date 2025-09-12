@@ -31,6 +31,7 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Instalar dependencias de Laravel (sin dev)
 RUN composer install --no-dev --optimize-autoloader
+RUN ls -l /opt/render/project/src/database/
 
 # Exponer el puerto correcto
 EXPOSE 80
