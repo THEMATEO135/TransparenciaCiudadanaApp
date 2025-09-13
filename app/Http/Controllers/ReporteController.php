@@ -83,6 +83,10 @@ class ReporteController extends Controller
     /**
      * Envía el webhook con múltiples intentos y mejor manejo de errores
      */
+    public function create()
+{
+    return view('reportes.crear');
+}
     private function sendWebhook($payload)
     {
         // URL del webhook desde el .env

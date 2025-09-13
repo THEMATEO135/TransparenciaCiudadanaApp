@@ -19,7 +19,8 @@ class Reporte extends Model
         'localidad',
         'barrio',
         'latitude',
-        'longitude'
+        'longitude',
+        'estado'
     ];
 
     protected $casts = [
