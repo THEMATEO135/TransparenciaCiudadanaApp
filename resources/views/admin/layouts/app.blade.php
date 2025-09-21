@@ -1,5 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+    <style>
+    .pagination .page-link {
+        color: #6f42c1; /* Púrpura */
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+    .pagination .page-link:hover {
+        background-color: #6f42c1;
+        color: #fff;
+    }
+    .pagination .active .page-link {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+    }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,3 +35,4 @@
     </div>
 </body>
 </html>
+
