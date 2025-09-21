@@ -1,4 +1,5 @@
 
+
 @extends('layouts.app')
 
 @section('title', 'Panel de Reportes')
@@ -77,11 +78,13 @@
                 </tbody>
             </table>
         </div>
-        <div class="d-flex justify-content-center">
+ <div class="d-flex justify-content-center">
     {{ $reportes->links('vendor.pagination.bootstrap-5') }}
 </div>
+
 
         </div>
     </div>
 @endsection
+
 
