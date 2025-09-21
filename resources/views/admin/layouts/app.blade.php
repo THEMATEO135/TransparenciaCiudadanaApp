@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
+
+<style>
+    .pagination .page-link {
+        font-size: 0.9rem; /* Tamaño normal */
+        padding: 0.5rem 0.75rem;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+    }
+</style>
+
     <style>
     .pagination .page-link {
         color: #6f42c1; /* Púrpura */
@@ -35,4 +50,3 @@
     </div>
 </body>
 </html>
-
