@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\Admin\ReporteAdminController;
+use App\Http\Controllers\Admin\AdminDashboardController; // 👈 Importa el dashboard controller
 
 /*
 |--------------------------------------------------------------------------
@@ -18,12 +19,15 @@ Route::get('/consulta', [ReporteController::class, 'consulta'])->name('reportes.
 
 // Rutas de administración (protegidas)
 Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
-    Route::get('/', function () {
-        return redirect()->route('admin.reportes.index');
-    })->name('dashboard');
-Route::get('/powerbi', function () {
-    return view('powerbi');
-});
+
+    
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/powerbi', function () {
+        return view('powerbi');
+    });
+
+    // Gestión de reportes
     Route::get('/reportes', [ReporteAdminController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/{reporte}/edit', [ReporteAdminController::class, 'edit'])->name('reportes.edit');
     Route::put('/reportes/{reporte}', [ReporteAdminController::class, 'update'])->name('reportes.update');
