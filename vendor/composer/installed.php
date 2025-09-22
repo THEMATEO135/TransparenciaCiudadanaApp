@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'mateo/transparencia-ciudadana',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '088a5aa36f7a98ef17db0931a0c841c6ef0886da',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -494,9 +494,9 @@
             'dev_requirement' => false,
         ),
         'mateo/transparencia-ciudadana' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '088a5aa36f7a98ef17db0931a0c841c6ef0886da',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -662,9 +662,9 @@
             'dev_requirement' => true,
         ),
         'phpunit/phpunit' => array(
-            'pretty_version' => '11.5.36',
-            'version' => '11.5.36.0',
-            'reference' => '264a87c7ef68b1ab9af7172357740dc266df5957',
+            'pretty_version' => '11.5.38',
+            'version' => '11.5.38.0',
+            'reference' => '5bd0e4f64a2261b7ade7054c51547beaf2d99e43',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpunit/phpunit',
             'aliases' => array(),

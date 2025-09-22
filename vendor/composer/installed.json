@@ -3740,17 +3740,17 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.36",
-            "version_normalized": "11.5.36.0",
+            "version": "11.5.38",
+            "version_normalized": "11.5.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "264a87c7ef68b1ab9af7172357740dc266df5957"
+                "reference": "5bd0e4f64a2261b7ade7054c51547beaf2d99e43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/264a87c7ef68b1ab9af7172357740dc266df5957",
-                "reference": "264a87c7ef68b1ab9af7172357740dc266df5957",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5bd0e4f64a2261b7ade7054c51547beaf2d99e43",
+                "reference": "5bd0e4f64a2261b7ade7054c51547beaf2d99e43",
                 "shasum": ""
             },
             "require": {
@@ -3784,7 +3784,7 @@
             "suggest": {
                 "ext-soap": "To be able to generate mocks based on WSDL files"
             },
-            "time": "2025-09-03T06:24:17+00:00",
+            "time": "2025-09-11T10:34:07+00:00",
             "bin": [
                 "phpunit"
             ],
@@ -3824,7 +3824,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.36"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.38"
             },
             "funding": [
                 {
