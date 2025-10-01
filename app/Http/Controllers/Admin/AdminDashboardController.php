@@ -14,7 +14,7 @@ class AdminDashboardController extends Controller
         // Totales
         $totalReportes = Reporte::count();
         $totalServicios = Servicio::count();
-        $totalUsuarios = User::count();
+        $totalUsuarios = Reporte::distinct('nombres')->count('nombres');
 
         // Reportes por servicio
         $labelsServicios = Servicio::pluck('nombre');
@@ -31,6 +31,12 @@ class AdminDashboardController extends Controller
             return Reporte::whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$mes])->count();
         });
 
+        // Coordenadas de los reportes (para el mapa de calor del dashboard)
+        $coordenadas = Reporte::select('lat', 'lng')
+            ->whereNotNull('lat')
+            ->whereNotNull('lng')
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalReportes',
             'totalServicios',
@@ -38,7 +44,28 @@ class AdminDashboardController extends Controller
             'labelsServicios',
             'valoresServicios',
             'labelsMeses',
-            'valoresMeses'
+            'valoresMeses',
+            'coordenadas'
         ));
+    }
+
+    // 👇 Nuevo método para la vista "mapa"
+    public function mapa()
+    {
+        // 🔹 Aquí deberían venir tus coordenadas desde la BD
+        $coordenadas = Reporte::select('lat', 'lng', 'servicio_id')
+            ->with('servicio:id,nombre')
+            ->whereNotNull('lat')
+            ->whereNotNull('lng')
+            ->get()
+            ->map(function ($r) {
+                return [
+                    "lat" => $r->lat,
+                    "lng" => $r->lng,
+                    "servicio" => $r->servicio->nombre ?? "Desconocido"
+                ];
+            });
+
+        return view('admin.mapa', compact('coordenadas'));
     }
 }

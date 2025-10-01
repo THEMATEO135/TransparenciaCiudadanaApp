@@ -534,3 +534,13 @@
             font-weight: 500;
             color: var(--secondary-color);
         }
+        /* ================================
+   Estilos del mapa de calor
+================================ */
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

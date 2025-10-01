@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'mateo/transparencia-ciudadana',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => '088a5aa36f7a98ef17db0931a0c841c6ef0886da',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'e37c93395a1d5cde710794bd49484746f650bf56',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -494,9 +494,9 @@
             'dev_requirement' => false,
         ),
         'mateo/transparencia-ciudadana' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => '088a5aa36f7a98ef17db0931a0c841c6ef0886da',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'e37c93395a1d5cde710794bd49484746f650bf56',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

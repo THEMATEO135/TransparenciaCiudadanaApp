@@ -16,20 +16,19 @@
     @yield('head')
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Transparencia Ciudadana</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">📊 Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reportes') }}">📑 Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reportes.index') }}">📑 Reportes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mapa') }}">🗺️ Mapa</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido -->
     <div class="container">
         @yield('content')
     </div>
@@ -37,3 +36,4 @@
     @yield('scripts')
 </body>
 </html>
+
