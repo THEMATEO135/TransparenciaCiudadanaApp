@@ -16,20 +16,46 @@ class AdminDashboardController extends Controller
         $totalServicios = Servicio::count();
         $totalUsuarios = Reporte::distinct('nombres')->count('nombres');
 
-        // Reportes por servicio
-        $labelsServicios = Servicio::pluck('nombre');
-        $valoresServicios = $labelsServicios->map(function ($servicio) {
-            return Reporte::whereHas('servicio', fn($q) => $q->where('nombre', $servicio))->count();
-        });
+        // Estadísticas por estado
+        $pendientes = Reporte::where('estado', 'pendiente')->count();
+        $enProceso = Reporte::where('estado', 'en_proceso')->count();
+        $resueltos = Reporte::where('estado', 'resuelto')->count();
 
-        // Reportes por mes
-        $labelsMeses = Reporte::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as mes")
-            ->groupBy('mes')
-            ->orderBy('mes')
-            ->pluck('mes');
-        $valoresMeses = $labelsMeses->map(function ($mes) {
-            return Reporte::whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$mes])->count();
-        });
+        // Comparativa mensual (últimos 6 meses)
+        $mesesComparativa = [];
+        $valoresComparativa = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $fecha = now()->subMonths($i);
+            $mesesComparativa[] = $fecha->format('M Y');
+            $valoresComparativa[] = Reporte::whereYear('created_at', $fecha->year)
+                ->whereMonth('created_at', $fecha->month)
+                ->count();
+        }
+
+        // Comparativa anual (últimos 3 años)
+        $añosComparativa = [];
+        $valoresAnuales = [];
+        for ($i = 2; $i >= 0; $i--) {
+            $año = now()->subYears($i)->year;
+            $añosComparativa[] = $año;
+            $valoresAnuales[] = Reporte::whereYear('created_at', $año)->count();
+        }
+
+        // Reportes por servicio
+        $labelsServicios = Servicio::pluck('nombre')->toArray();
+        $valoresServicios = collect($labelsServicios)->map(function ($servicio) {
+            return Reporte::whereHas('servicio', fn($q) => $q->where('nombre', $servicio))->count();
+        })->toArray();
+
+        // Reportes por mes (para compatibilidad con la vista antigua)
+        $labelsMeses = collect($mesesComparativa);
+        $valoresMeses = collect($valoresComparativa);
+
+        // Reportes recientes (últimos 10)
+        $reportesRecientes = Reporte::with('servicio')
+            ->orderBy('created_at', 'DESC')
+            ->limit(10)
+            ->get();
 
         // Coordenadas de los reportes (para el mapa de calor del dashboard)
         $coordenadas = Reporte::select('lat', 'lng')
@@ -37,15 +63,30 @@ class AdminDashboardController extends Controller
             ->whereNotNull('lng')
             ->get();
 
+        // Actividad reciente
+        $actividadReciente = \App\Models\ActivityLog::with('user')
+            ->orderBy('created_at', 'DESC')
+            ->limit(15)
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalReportes',
             'totalServicios',
             'totalUsuarios',
+            'pendientes',
+            'enProceso',
+            'resueltos',
             'labelsServicios',
             'valoresServicios',
             'labelsMeses',
             'valoresMeses',
-            'coordenadas'
+            'mesesComparativa',
+            'valoresComparativa',
+            'añosComparativa',
+            'valoresAnuales',
+            'reportesRecientes',
+            'coordenadas',
+            'actividadReciente'
         ));
     }
 
