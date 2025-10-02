@@ -10,6 +10,19 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+        .view-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .view-toggle button {
+            margin: 0 0.25rem;
+        }
         .chart-container {
             background: white;
             padding: 1.5rem;
@@ -87,8 +100,19 @@
     <div class="fade-in" style="animation-delay: 0.2s;">
         <div class="page-header">
             <h2 class="page-title" data-icon="🗺️" style="font-size: 1.5rem;">Mapa de Reportes</h2>
+            <div class="page-actions">
+                <a href="{{ route('admin.mapa') }}" class="btn btn-primary">
+                    🗺️ Ver Mapa Completo
+                </a>
+            </div>
         </div>
-        <div id="map"></div>
+        <div style="position: relative;">
+            <div class="view-toggle">
+                <button class="btn btn-sm btn-primary" id="btnHeatmap">🔥 Mapa de Calor</button>
+                <button class="btn btn-sm btn-secondary" id="btnMarkers">📍 Marcadores</button>
+            </div>
+            <div id="map"></div>
+        </div>
     </div>
 @endsection
 

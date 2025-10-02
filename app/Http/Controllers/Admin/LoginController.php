@@ -38,7 +38,7 @@ class LoginController extends Controller
             \App\Models\ActivityLog::log('login', 'Usuario inició sesión');
 
             $request->session()->regenerate();
-            session(['last_activity' => time()]);
+            session(['last_activity' => time(), 'admin_email' => $user->email]);
 
             return redirect()->intended(route('admin.dashboard'));
         }

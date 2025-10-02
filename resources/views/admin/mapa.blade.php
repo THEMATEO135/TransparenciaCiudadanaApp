@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
     <style>
+        .view-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .view-toggle button {
+            margin: 0 0.25rem;
+        }
         #map {
             height: 600px;
             border-radius: 12px;
@@ -114,7 +127,13 @@
     <!-- Mapa -->
     <div class="row">
         <div class="col-lg-9">
-            <div id="map" class="fade-in"></div>
+            <div style="position: relative;">
+                <div class="view-toggle">
+                    <button class="btn btn-sm btn-primary" id="btnHeatmap">🔥 Mapa de Calor</button>
+                    <button class="btn btn-sm btn-secondary" id="btnMarkers">📍 Marcadores</button>
+                </div>
+                <div id="map" class="fade-in"></div>
+            </div>
         </div>
         <div class="col-lg-3">
             <div class="map-legend fade-in">
@@ -143,6 +162,13 @@
 @section('scripts')
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+    <!-- Variables globales desde Laravel -->
+    <script>
+        window.reportes = @json($reportes);
+    </script>
+
     <script>
         // Inicializar el mapa en Colombia
         var map = L.map('map').setView([4.5709, -74.2973], 6);
@@ -153,42 +179,8 @@
             maxZoom: 19
         }).addTo(map);
 
-        // Datos de prueba (reemplazar con datos reales de la BD)
-        var reportes = [
-            {
-                id: 1,
-                titulo: "Corte de energía",
-                descripcion: "Falla reportada en el suministro eléctrico",
-                ubicacion: "Bogotá",
-                ciudadano: "Juan Pérez",
-                estado: "Pendiente",
-                servicio: "Energía",
-                lat: 4.6097,
-                lng: -74.0817
-            },
-            {
-                id: 2,
-                titulo: "Problemas de Internet",
-                descripcion: "Conexión intermitente reportada",
-                ubicacion: "Medellín",
-                ciudadano: "María García",
-                estado: "En Proceso",
-                servicio: "Internet",
-                lat: 6.2518,
-                lng: -75.5636
-            },
-            {
-                id: 3,
-                titulo: "Daño en red de agua",
-                descripcion: "Baja presión en el servicio de agua",
-                ubicacion: "Cali",
-                ciudadano: "Carlos López",
-                estado: "Resuelto",
-                servicio: "Agua",
-                lat: 3.4516,
-                lng: -76.5320
-            }
-        ];
+        // Datos reales desde la BD
+        var reportes = window.reportes || [];
 
         // Función para obtener color según estado
         function getMarkerColor(estado) {
@@ -210,9 +202,11 @@
             });
         }
 
-        // Almacenar todos los marcadores
+        // Almacenar todos los marcadores y capas
         var allMarkers = [];
         var markerClusterGroup = L.markerClusterGroup();
+        var heatLayer = null;
+        var currentView = 'markers'; // 'markers' o 'heatmap'
 
         // Contadores por estado
         var counts = {
@@ -221,6 +215,29 @@
             resolved: 0,
             process: 0
         };
+
+        // Preparar datos para el mapa de calor
+        var heatData = reportes.map(function(r) {
+            return [r.lat, r.lng, 0.8]; // [lat, lng, intensidad]
+        });
+
+        // Crear capa de mapa de calor (inicialmente no agregada al mapa)
+        if (heatData.length > 0) {
+            heatLayer = L.heatLayer(heatData, {
+                radius: 50,
+                blur: 25,
+                minOpacity: 0.4,
+                maxZoom: 10,
+                max: 1.0,
+                gradient: {
+                    0.0: 'blue',
+                    0.3: 'cyan',
+                    0.5: 'lime',
+                    0.7: 'yellow',
+                    1.0: 'red'
+                }
+            });
+        }
 
         // Dibujar marcadores
         reportes.forEach(function(reporte) {
@@ -250,11 +267,18 @@
                 counts.total++;
                 if (reporte.estado === 'Pendiente') counts.pending++;
                 if (reporte.estado === 'Resuelto') counts.resolved++;
-                if (reporte.estado === 'En Proceso') counts.process++;
+                if (reporte.estado === 'En Proceso' || reporte.estado === 'En proceso') counts.process++;
             }
         });
 
+        // Agregar capa de marcadores por defecto
         map.addLayer(markerClusterGroup);
+
+        // Ajustar el mapa a los puntos si hay datos
+        if (reportes.length > 0) {
+            var bounds = L.latLngBounds(reportes.map(r => [r.lat, r.lng]));
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
 
         // Actualizar estadísticas
         document.getElementById('total-markers').textContent = counts.total;
@@ -262,8 +286,40 @@
         document.getElementById('resolved-count').textContent = counts.resolved;
         document.getElementById('process-count').textContent = counts.process;
 
-        // Función para filtrar marcadores
+        // Toggle entre vistas
+        document.getElementById('btnHeatmap').addEventListener('click', function() {
+            if (currentView !== 'heatmap' && heatLayer) {
+                map.removeLayer(markerClusterGroup);
+                map.addLayer(heatLayer);
+                currentView = 'heatmap';
+                this.classList.remove('btn-secondary');
+                this.classList.add('btn-primary');
+                document.getElementById('btnMarkers').classList.remove('btn-primary');
+                document.getElementById('btnMarkers').classList.add('btn-secondary');
+            }
+        });
+
+        document.getElementById('btnMarkers').addEventListener('click', function() {
+            if (currentView !== 'markers') {
+                if (heatLayer) {
+                    map.removeLayer(heatLayer);
+                }
+                map.addLayer(markerClusterGroup);
+                currentView = 'markers';
+                this.classList.remove('btn-secondary');
+                this.classList.add('btn-primary');
+                document.getElementById('btnHeatmap').classList.remove('btn-primary');
+                document.getElementById('btnHeatmap').classList.add('btn-secondary');
+            }
+        });
+
+        // Función para filtrar marcadores (solo funciona en vista de marcadores)
         function filterMarkers(estado) {
+            if (currentView !== 'markers') {
+                // Cambiar a vista de marcadores primero
+                document.getElementById('btnMarkers').click();
+            }
+
             markerClusterGroup.clearLayers();
 
             allMarkers.forEach(function(marker) {

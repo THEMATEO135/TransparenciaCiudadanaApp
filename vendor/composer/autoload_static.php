@@ -665,6 +665,7 @@ class ComposerStaticInitd5df3000a4a4925111f0de38431f88e6
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
+        'Database\\Seeders\\AddCoordinatesToReportesSeeder' => __DIR__ . '/../..' . '/database/seeders/AddCoordinatesToReportesSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\ServicioSeeder' => __DIR__ . '/../..' . '/database/seeders/ServicioSeeder.php',
         'Database\\Seeders\\UserSeeder' => __DIR__ . '/../..' . '/database/seeders/UserSeeder.php',

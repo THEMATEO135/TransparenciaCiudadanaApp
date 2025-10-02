@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\PasswordResetController;
 use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\HistorialReportesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,12 @@ Route::get('/', [ReporteController::class, 'index'])->name('home');
 Route::get('/reportes/create', [ReporteController::class, 'create'])->name('reportes.create');
 Route::post('/reportes', [ReporteController::class, 'store'])->name('reportes.store');
 Route::get('/consulta', [ReporteController::class, 'consulta'])->name('reportes.consulta');
+
+// Rutas de historial con OTP
+Route::get('/mis-reportes', [HistorialReportesController::class, 'index'])->name('reportes.historial');
+Route::post('/mis-reportes/enviar-otp', [HistorialReportesController::class, 'enviarOtp'])->name('reportes.historial.enviarOtp');
+Route::get('/mis-reportes/verificar', [HistorialReportesController::class, 'mostrarVerificacion'])->name('reportes.historial.verificar');
+Route::post('/mis-reportes/verificar', [HistorialReportesController::class, 'verificarOtp'])->name('reportes.historial.verificarOtp');
 
 // Rutas de autenticación admin
 Route::prefix('admin')->name('admin.')->group(function () {

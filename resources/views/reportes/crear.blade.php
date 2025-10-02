@@ -23,6 +23,14 @@
                     COMPENSAR
                 </div>
             </div>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                <a href="{{ route('reportes.historial') }}" style="padding: 0.5rem 1rem; background: white; color: #ff6600; border: 2px solid #ff6600; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-history" style="margin-right: 0.5rem;"></i>Ver Mis Reportes
+                </a>
+                <a href="{{ route('admin.login') }}" style="padding: 0.5rem 1rem; background: #ff6600; color: white; border: 2px solid #ff6600; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>Iniciar Sesión
+                </a>
+            </div>
             <h1 class="hero-title">¿Tienes problemas con alguno de estos servicios?</h1>
             <p class="hero-subtitle">Reporta fallas de manera rápida y sencilla en nuestros servicios principales</p>
  <div class="services-grid">

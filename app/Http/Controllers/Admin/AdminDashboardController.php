@@ -58,10 +58,18 @@ class AdminDashboardController extends Controller
             ->get();
 
         // Coordenadas de los reportes (para el mapa de calor del dashboard)
-        $coordenadas = Reporte::select('lat', 'lng')
-            ->whereNotNull('lat')
-            ->whereNotNull('lng')
-            ->get();
+        $coordenadas = Reporte::select('latitude as lat', 'longitude as lng', 'servicio_id')
+            ->with('servicio:id,nombre')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get()
+            ->map(function($r) {
+                return [
+                    'lat' => (float)$r->lat,
+                    'lng' => (float)$r->lng,
+                    'servicio' => $r->servicio->nombre ?? 'N/A'
+                ];
+            });
 
         // Actividad reciente
         $actividadReciente = \App\Models\ActivityLog::with('user')
@@ -93,20 +101,25 @@ class AdminDashboardController extends Controller
     // 👇 Nuevo método para la vista "mapa"
     public function mapa()
     {
-        // 🔹 Aquí deberían venir tus coordenadas desde la BD
-        $coordenadas = Reporte::select('lat', 'lng', 'servicio_id')
-            ->with('servicio:id,nombre')
-            ->whereNotNull('lat')
-            ->whereNotNull('lng')
+        // Obtener todos los reportes con coordenadas
+        $reportes = Reporte::with('servicio:id,nombre')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
             ->get()
             ->map(function ($r) {
                 return [
-                    "lat" => $r->lat,
-                    "lng" => $r->lng,
-                    "servicio" => $r->servicio->nombre ?? "Desconocido"
+                    "id" => $r->id,
+                    "titulo" => $r->servicio->nombre ?? 'Reporte sin título',
+                    "descripcion" => $r->descripcion ?? 'Sin descripción',
+                    "ubicacion" => ($r->direccion ?? '') . ' ' . ($r->barrio ?? '') . ' ' . ($r->localidad ?? ''),
+                    "ciudadano" => $r->nombres ?? 'Anónimo',
+                    "estado" => ucfirst(str_replace('_', ' ', $r->estado ?? 'pendiente')),
+                    "servicio" => $r->servicio->nombre ?? "Desconocido",
+                    "lat" => (float)$r->latitude,
+                    "lng" => (float)$r->longitude
                 ];
             });
 
-        return view('admin.mapa', compact('coordenadas'));
+        return view('admin.mapa', compact('reportes'));
     }
 }
