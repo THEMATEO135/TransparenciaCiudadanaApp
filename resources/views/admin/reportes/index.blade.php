@@ -3,62 +3,62 @@
 @section('title', 'Reportes')
 
 @section('content')
-    <div class="page-header">
+    <header class="page-header">
         <h1 class="page-title" data-icon="📑">Reportes Recibidos</h1>
         <div class="page-actions">
-            <a href="{{ route('reportes.create') }}" class="btn btn-success">
+            <a href="{{ route('reportes.create') }}" class="btn btn-success" aria-label="Crear un nuevo reporte">
                 ➕ Nuevo Reporte
             </a>
-            <a href="{{ route('admin.mapa') }}" class="btn btn-info">
+            <a href="{{ route('admin.mapa') }}" class="btn btn-info" aria-label="Ver reportes en el mapa de calor">
                 🗺️ Ver Mapa
             </a>
         </div>
-    </div>
+    </header>
 
     <!-- Mensaje de éxito -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show slide-in" role="alert">
             <strong>✅ Éxito:</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar alerta de éxito"></button>
         </div>
     @endif
 
     <!-- Estadísticas rápidas -->
-    <div class="stats-grid mb-4">
-        <div class="stat-card">
-            <span class="stat-icon">📋</span>
-            <div class="stat-label">Total Reportes</div>
-            <div class="stat-value">{{ $reportes->total() }}</div>
+    <section class="stats-grid mb-4" aria-label="Estadísticas rápidas de reportes">
+        <div class="stat-card" role="article" aria-labelledby="stat-total-index">
+            <span class="stat-icon" aria-hidden="true">📋</span>
+            <div class="stat-label" id="stat-total-index">Total Reportes</div>
+            <div class="stat-value" aria-label="Total de reportes: {{ $reportes->total() }}">{{ $reportes->total() }}</div>
         </div>
-        <div class="stat-card">
-            <span class="stat-icon">⏳</span>
-            <div class="stat-label">Pendientes</div>
-            <div class="stat-value">{{ $reportes->where('estado', 'Pendiente')->count() }}</div>
+        <div class="stat-card" role="article" aria-labelledby="stat-pendientes-index">
+            <span class="stat-icon" aria-hidden="true">⏳</span>
+            <div class="stat-label" id="stat-pendientes-index">Pendientes</div>
+            <div class="stat-value" aria-label="Reportes pendientes: {{ $reportes->where('estado', 'Pendiente')->count() }}">{{ $reportes->where('estado', 'Pendiente')->count() }}</div>
         </div>
-        <div class="stat-card">
-            <span class="stat-icon">✅</span>
-            <div class="stat-label">Resueltos</div>
-            <div class="stat-value">{{ $reportes->where('estado', 'Resuelto')->count() }}</div>
+        <div class="stat-card" role="article" aria-labelledby="stat-resueltos-index">
+            <span class="stat-icon" aria-hidden="true">✅</span>
+            <div class="stat-label" id="stat-resueltos-index">Resueltos</div>
+            <div class="stat-value" aria-label="Reportes resueltos: {{ $reportes->where('estado', 'Resuelto')->count() }}">{{ $reportes->where('estado', 'Resuelto')->count() }}</div>
         </div>
-        <div class="stat-card">
-            <span class="stat-icon">📄</span>
-            <div class="stat-label">En esta página</div>
-            <div class="stat-value">{{ $reportes->count() }}</div>
+        <div class="stat-card" role="article" aria-labelledby="stat-pagina-index">
+            <span class="stat-icon" aria-hidden="true">📄</span>
+            <div class="stat-label" id="stat-pagina-index">En esta página</div>
+            <div class="stat-value" aria-label="Reportes en esta página: {{ $reportes->count() }}">{{ $reportes->count() }}</div>
         </div>
-    </div>
+    </section>
 
     <!-- Tabla de reportes -->
     <div class="table-container fade-in">
-        <table class="table">
+        <table class="table" role="table" aria-label="Lista de reportes recibidos">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Ciudadano</th>
-                    <th>Servicio</th>
-                    <th>Descripción</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
-                    <th class="text-center">Acciones</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Ciudadano</th>
+                    <th scope="col">Servicio</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>

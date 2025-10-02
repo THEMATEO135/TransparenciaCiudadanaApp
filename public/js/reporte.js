@@ -1,10 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('reportForm');
-    const result = document.getElementById('result');
-    const submitBtn = document.getElementById('submitBtn');
-    const locationStatus = document.getElementById('locationStatus');
-    const getLocationBtn = document.getElementById('getLocationBtn');
-    const servicePrompt = document.getElementById('servicePrompt');
+    // Cache de elementos DOM para mejor performance
+    const DOM = {
+        form: document.getElementById('reportForm'),
+        result: document.getElementById('result'),
+        submitBtn: document.getElementById('submitBtn'),
+        locationStatus: document.getElementById('locationStatus'),
+        getLocationBtn: document.getElementById('getLocationBtn'),
+        servicePrompt: document.getElementById('servicePrompt'),
+        localidadSelect: document.getElementById('localidad'),
+        barrioSelect: document.getElementById('barrio'),
+        latInput: document.getElementById('latitude'),
+        lngInput: document.getElementById('longitude'),
+        direccionInput: document.getElementById('direccion'),
+        servicioInput: document.getElementById('servicio_id'),
+        nombreInput: document.getElementById('nombres'),
+        descTextarea: document.getElementById('descripcion')
+    };
+
     let serviceSelected = false;
 
     // Deshabilitar todos los controles al inicio

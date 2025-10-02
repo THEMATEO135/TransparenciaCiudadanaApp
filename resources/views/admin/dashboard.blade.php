@@ -43,38 +43,38 @@
 @endsection
 
 @section('content')
-    <div class="page-header">
+    <header class="page-header">
         <h1 class="page-title" data-icon="📊">Dashboard</h1>
         <div class="page-actions">
-            <a href="{{ route('admin.reportes.index') }}" class="btn btn-primary">
+            <a href="{{ route('admin.reportes.index') }}" class="btn btn-primary" aria-label="Ver la lista completa de reportes">
                 📑 Ver Todos los Reportes
             </a>
         </div>
-    </div>
+    </header>
 
     <!-- Estadísticas Principales -->
-    <div class="stats-grid">
-        <div class="stat-card slide-in">
-            <span class="stat-icon">📋</span>
-            <div class="stat-label">Total Reportes</div>
-            <div class="stat-value">{{ $totalReportes }}</div>
+    <section class="stats-grid" aria-label="Estadísticas principales del sistema">
+        <div class="stat-card slide-in" role="article" aria-labelledby="stat-total-reportes">
+            <span class="stat-icon" aria-hidden="true">📋</span>
+            <div class="stat-label" id="stat-total-reportes">Total Reportes</div>
+            <div class="stat-value" aria-label="Total de reportes: {{ $totalReportes }}">{{ $totalReportes }}</div>
         </div>
-        <div class="stat-card slide-in" style="animation-delay: 0.1s;">
-            <span class="stat-icon">✅</span>
-            <div class="stat-label">Servicios Activos</div>
-            <div class="stat-value">{{ $totalServicios }}</div>
+        <div class="stat-card slide-in" style="animation-delay: 0.1s;" role="article" aria-labelledby="stat-servicios">
+            <span class="stat-icon" aria-hidden="true">✅</span>
+            <div class="stat-label" id="stat-servicios">Servicios Activos</div>
+            <div class="stat-value" aria-label="Servicios activos: {{ $totalServicios }}">{{ $totalServicios }}</div>
         </div>
-        <div class="stat-card slide-in" style="animation-delay: 0.2s;">
-            <span class="stat-icon">👥</span>
-            <div class="stat-label">Usuarios Registrados</div>
-            <div class="stat-value">{{ $totalUsuarios }}</div>
+        <div class="stat-card slide-in" style="animation-delay: 0.2s;" role="article" aria-labelledby="stat-usuarios">
+            <span class="stat-icon" aria-hidden="true">👥</span>
+            <div class="stat-label" id="stat-usuarios">Usuarios Registrados</div>
+            <div class="stat-value" aria-label="Usuarios registrados: {{ $totalUsuarios }}">{{ $totalUsuarios }}</div>
         </div>
-        <div class="stat-card slide-in" style="animation-delay: 0.3s;">
-            <span class="stat-icon">📊</span>
-            <div class="stat-label">Promedio Mensual</div>
-            <div class="stat-value">{{ $totalReportes > 0 ? round($totalReportes / max(count($labelsMeses), 1)) : 0 }}</div>
+        <div class="stat-card slide-in" style="animation-delay: 0.3s;" role="article" aria-labelledby="stat-promedio">
+            <span class="stat-icon" aria-hidden="true">📊</span>
+            <div class="stat-label" id="stat-promedio">Promedio Mensual</div>
+            <div class="stat-value" aria-label="Promedio mensual: {{ $totalReportes > 0 ? round($totalReportes / max(count($labelsMeses), 1)) : 0 }} reportes">{{ $totalReportes > 0 ? round($totalReportes / max(count($labelsMeses), 1)) : 0 }}</div>
         </div>
-    </div>
+    </section>
 
     <!-- Gráficas -->
     <div class="row mb-4">

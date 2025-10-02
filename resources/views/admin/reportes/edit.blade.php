@@ -3,39 +3,39 @@
 @section('title', 'Editar Reporte')
 
 @section('content')
-    <div class="page-header">
+    <header class="page-header">
         <h1 class="page-title" data-icon="✏️">Editar Reporte #{{ $reporte->id }}</h1>
         <div class="page-actions">
-            <a href="{{ route('admin.reportes.index') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.reportes.index') }}" class="btn btn-secondary" aria-label="Volver a la lista de reportes">
                 ← Volver al Listado
             </a>
         </div>
-    </div>
+    </header>
 
     <!-- Información del Ciudadano -->
-    <div class="row mb-4">
+    <section class="row mb-4" aria-label="Información del reporte">
         <div class="col-md-6">
-            <div class="stat-card">
-                <span class="stat-icon">👤</span>
-                <div class="stat-label">Ciudadano</div>
+            <div class="stat-card" role="article" aria-labelledby="info-ciudadano">
+                <span class="stat-icon" aria-hidden="true">👤</span>
+                <div class="stat-label" id="info-ciudadano">Ciudadano</div>
                 <div class="stat-value" style="font-size: 1.3rem;">{{ $reporte->nombres }}</div>
                 <small style="color: var(--dark-gray);">{{ $reporte->email }}</small>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="stat-card">
-                <span class="stat-icon">📅</span>
-                <div class="stat-label">Fecha de Creación</div>
+            <div class="stat-card" role="article" aria-labelledby="info-fecha">
+                <span class="stat-icon" aria-hidden="true">📅</span>
+                <div class="stat-label" id="info-fecha">Fecha de Creación</div>
                 <div class="stat-value" style="font-size: 1.3rem;">
                     {{ $reporte->created_at->format('d/m/Y H:i') }}
                 </div>
                 <small style="color: var(--dark-gray);">Hace {{ $reporte->created_at->diffForHumans() }}</small>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Formulario de Edición -->
-    <form action="{{ route('admin.reportes.update', $reporte) }}" method="POST" class="fade-in">
+    <form action="{{ route('admin.reportes.update', $reporte) }}" method="POST" class="fade-in" aria-label="Formulario de edición de reporte">
         @csrf
         @method('PUT')
 
@@ -43,10 +43,10 @@
             <!-- Columna Izquierda -->
             <div class="col-lg-6">
                 <div class="form-group">
-                    <label class="form-label">
-                        <span style="color: var(--primary-color);">📊</span> Estado del Reporte
+                    <label for="estado" class="form-label">
+                        <span style="color: var(--primary-color);" aria-hidden="true">📊</span> Estado del Reporte
                     </label>
-                    <select name="estado" class="form-select" required>
+                    <select name="estado" id="estado" class="form-select" required aria-required="true">
                         <option value="Pendiente" {{ $reporte->estado == 'Pendiente' ? 'selected' : '' }}>
                             ⏳ Pendiente
                         </option>
@@ -63,10 +63,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
-                        <span style="color: var(--primary-color);">🏢</span> Servicio
+                    <label for="servicio_id" class="form-label">
+                        <span style="color: var(--primary-color);" aria-hidden="true">🏢</span> Servicio
                     </label>
-                    <select name="servicio_id" class="form-select" required>
+                    <select name="servicio_id" id="servicio_id" class="form-select" required aria-required="true">
                         @foreach($servicios as $servicio)
                             <option value="{{ $servicio->id }}"
                                     {{ $reporte->servicio_id == $servicio->id ? 'selected' : '' }}>

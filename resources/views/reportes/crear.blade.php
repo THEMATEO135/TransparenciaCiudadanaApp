@@ -23,31 +23,31 @@
                     COMPENSAR
                 </div>
             </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
-                <a href="{{ route('reportes.historial') }}" style="padding: 0.5rem 1rem; background: white; color: #ff6600; border: 2px solid #ff6600; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
-                    <i class="fas fa-history" style="margin-right: 0.5rem;"></i>Ver Mis Reportes
+            <div class="nav-buttons">
+                <a href="{{ route('reportes.historial') }}" class="btn-outline-primary" aria-label="Ver mis reportes enviados">
+                    <i class="fas fa-history"></i>Ver Mis Reportes
                 </a>
-                <a href="{{ route('admin.login') }}" style="padding: 0.5rem 1rem; background: #ff6600; color: white; border: 2px solid #ff6600; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
-                    <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>Iniciar Sesión
+                <a href="{{ route('admin.login') }}" class="btn-primary-custom" aria-label="Iniciar sesión como administrador">
+                    <i class="fas fa-sign-in-alt"></i>Iniciar Sesión
                 </a>
             </div>
             <h1 class="hero-title">¿Tienes problemas con alguno de estos servicios?</h1>
             <p class="hero-subtitle">Reporta fallas de manera rápida y sencilla en nuestros servicios principales</p>
- <div class="services-grid">
-    <div class="service-card" onclick="selectService('energia', event)">
-        <i class="fas fa-bolt service-icon"></i>
+ <div class="services-grid" role="group" aria-label="Seleccionar tipo de servicio">
+    <div class="service-card" onclick="selectService('energia', event)" onkeypress="if(event.key==='Enter'||event.key===' ')selectService('energia',event)" tabindex="0" role="button" aria-label="Seleccionar Energía Eléctrica">
+        <i class="fas fa-bolt service-icon" aria-hidden="true"></i>
         <div class="service-title">Energía Eléctrica</div>
     </div>
-    <div class="service-card" onclick="selectService('internet', event)">
-        <i class="fas fa-wifi service-icon"></i>
+    <div class="service-card" onclick="selectService('internet', event)" onkeypress="if(event.key==='Enter'||event.key===' ')selectService('internet',event)" tabindex="0" role="button" aria-label="Seleccionar Internet">
+        <i class="fas fa-wifi service-icon" aria-hidden="true"></i>
         <div class="service-title">Internet</div>
     </div>
-    <div class="service-card" onclick="selectService('gas', event)">
-        <i class="fas fa-fire service-icon"></i>
+    <div class="service-card" onclick="selectService('gas', event)" onkeypress="if(event.key==='Enter'||event.key===' ')selectService('gas',event)" tabindex="0" role="button" aria-label="Seleccionar Gas Natural">
+        <i class="fas fa-fire service-icon" aria-hidden="true"></i>
         <div class="service-title">Gas Natural</div>
     </div>
-    <div class="service-card" onclick="selectService('agua', event)">
-        <i class="fas fa-tint service-icon"></i>
+    <div class="service-card" onclick="selectService('agua', event)" onkeypress="if(event.key==='Enter'||event.key===' ')selectService('agua',event)" tabindex="0" role="button" aria-label="Seleccionar Acueducto">
+        <i class="fas fa-tint service-icon" aria-hidden="true"></i>
         <div class="service-title">Acueducto</div>
     </div>
 </div>

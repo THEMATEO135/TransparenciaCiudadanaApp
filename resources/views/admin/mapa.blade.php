@@ -80,21 +80,21 @@
 @endsection
 
 @section('content')
-    <div class="page-header">
+    <header class="page-header">
         <h1 class="page-title" data-icon="🗺️">Mapa de Reportes</h1>
         <div class="page-actions">
-            <a href="{{ route('admin.reportes.index') }}" class="btn btn-primary">
+            <a href="{{ route('admin.reportes.index') }}" class="btn btn-primary" aria-label="Ver la lista de reportes en formato de tabla">
                 📑 Ver Lista de Reportes
             </a>
         </div>
-    </div>
+    </header>
 
     <!-- Estadísticas del Mapa -->
-    <div class="stats-grid mb-4">
-        <div class="stat-card">
-            <span class="stat-icon">📍</span>
-            <div class="stat-label">Reportes con Ubicación</div>
-            <div class="stat-value" id="total-markers">0</div>
+    <section class="stats-grid mb-4" aria-label="Estadísticas de reportes en el mapa">
+        <div class="stat-card" role="article" aria-labelledby="stat-ubicacion">
+            <span class="stat-icon" aria-hidden="true">📍</span>
+            <div class="stat-label" id="stat-ubicacion">Reportes con Ubicación</div>
+            <div class="stat-value" id="total-markers" aria-live="polite">0</div>
         </div>
         <div class="stat-card">
             <span class="stat-icon">⏳</span>
