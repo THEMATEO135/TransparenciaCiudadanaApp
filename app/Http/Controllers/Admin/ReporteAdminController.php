@@ -65,10 +65,20 @@ class ReporteAdminController extends Controller
     public function update(Request $request, Reporte $reporte)
     {
         $validated = $request->validate([
-            'estado' => 'required|string|in:pendiente,en_proceso,resuelto',
+            'estado' => 'required|string|in:Pendiente,En Proceso,Resuelto,Rechazado',
             'servicio_id' => 'required|integer|exists:servicios,id',
             'descripcion' => 'required|string',
+            'notas_admin' => 'nullable|string',
         ]);
+
+        // Convertir estado al formato de la base de datos
+        $estadosMap = [
+            'Pendiente' => 'pendiente',
+            'En Proceso' => 'en_proceso',
+            'Resuelto' => 'resuelto',
+            'Rechazado' => 'resuelto' // No existe rechazado en BD, usar resuelto
+        ];
+        $validated['estado'] = $estadosMap[$validated['estado']] ?? 'pendiente';
 
         $changes = [];
         foreach ($validated as $key => $value) {

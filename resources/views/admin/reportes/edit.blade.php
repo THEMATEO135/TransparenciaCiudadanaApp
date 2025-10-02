@@ -47,17 +47,14 @@
                         <span style="color: var(--primary-color);" aria-hidden="true">📊</span> Estado del Reporte
                     </label>
                     <select name="estado" id="estado" class="form-select" required aria-required="true">
-                        <option value="Pendiente" {{ $reporte->estado == 'Pendiente' ? 'selected' : '' }}>
+                        <option value="Pendiente" {{ $reporte->estado == 'pendiente' ? 'selected' : '' }}>
                             ⏳ Pendiente
                         </option>
-                        <option value="En Proceso" {{ $reporte->estado == 'En Proceso' ? 'selected' : '' }}>
+                        <option value="En Proceso" {{ $reporte->estado == 'en_proceso' ? 'selected' : '' }}>
                             🔄 En Proceso
                         </option>
-                        <option value="Resuelto" {{ $reporte->estado == 'Resuelto' ? 'selected' : '' }}>
+                        <option value="Resuelto" {{ $reporte->estado == 'resuelto' ? 'selected' : '' }}>
                             ✅ Resuelto
-                        </option>
-                        <option value="Rechazado" {{ $reporte->estado == 'Rechazado' ? 'selected' : '' }}>
-                            ❌ Rechazado
                         </option>
                     </select>
                 </div>

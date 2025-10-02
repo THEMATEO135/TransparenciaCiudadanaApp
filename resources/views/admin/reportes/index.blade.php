@@ -33,12 +33,12 @@
         <div class="stat-card" role="article" aria-labelledby="stat-pendientes-index">
             <span class="stat-icon" aria-hidden="true">⏳</span>
             <div class="stat-label" id="stat-pendientes-index">Pendientes</div>
-            <div class="stat-value" aria-label="Reportes pendientes: {{ $reportes->where('estado', 'Pendiente')->count() }}">{{ $reportes->where('estado', 'Pendiente')->count() }}</div>
+            <div class="stat-value" aria-label="Reportes pendientes: {{ $reportes->where('estado', 'pendiente')->count() }}">{{ $reportes->where('estado', 'pendiente')->count() }}</div>
         </div>
         <div class="stat-card" role="article" aria-labelledby="stat-resueltos-index">
             <span class="stat-icon" aria-hidden="true">✅</span>
             <div class="stat-label" id="stat-resueltos-index">Resueltos</div>
-            <div class="stat-value" aria-label="Reportes resueltos: {{ $reportes->where('estado', 'Resuelto')->count() }}">{{ $reportes->where('estado', 'Resuelto')->count() }}</div>
+            <div class="stat-value" aria-label="Reportes resueltos: {{ $reportes->where('estado', 'resuelto')->count() }}">{{ $reportes->where('estado', 'resuelto')->count() }}</div>
         </div>
         <div class="stat-card" role="article" aria-labelledby="stat-pagina-index">
             <span class="stat-icon" aria-hidden="true">📄</span>
@@ -76,14 +76,14 @@
                         </td>
                         <td>{{ Str::limit($reporte->descripcion, 60) }}</td>
                         <td>
-                            @if($reporte->estado == 'Pendiente')
+                            @if($reporte->estado == 'pendiente')
                                 <span class="badge badge-warning">⏳ Pendiente</span>
-                            @elseif($reporte->estado == 'Resuelto')
+                            @elseif($reporte->estado == 'resuelto')
                                 <span class="badge badge-success">✅ Resuelto</span>
-                            @elseif($reporte->estado == 'En Proceso')
+                            @elseif($reporte->estado == 'en_proceso')
                                 <span class="badge badge-info">🔄 En Proceso</span>
                             @else
-                                <span class="badge badge-secondary">{{ $reporte->estado ?? 'Sin estado' }}</span>
+                                <span class="badge badge-secondary">{{ ucfirst(str_replace('_', ' ', $reporte->estado ?? 'Sin estado')) }}</span>
                             @endif
                         </td>
                         <td>

@@ -192,13 +192,35 @@
             }
         }
 
-        // Crear iconos personalizados
-        function createCustomIcon(color) {
+        // Función para obtener icono según servicio
+        function getServiceIcon(servicio) {
+            const iconos = {
+                'Energía Eléctrica': '⚡',
+                'Internet': '📡',
+                'Gas Natural': '🔥',
+                'Acueducto': '💧',
+                'Agua': '💧',
+                'Electricidad': '⚡',
+                'Gas': '🔥',
+                'Alcantarillado': '🚰',
+                'Basuras': '🗑️',
+                'Transporte': '🚌',
+                'Vías': '🛣️',
+                'Alumbrado': '💡',
+                'Parques': '🌳',
+                'Seguridad': '🚨'
+            };
+            return iconos[servicio] || '📍';
+        }
+
+        // Crear iconos personalizados con emoji
+        function createCustomIcon(color, servicio) {
+            const emoji = getServiceIcon(servicio);
             return L.divIcon({
                 className: 'custom-marker',
-                html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
+                html: `<div style="background-color: white; width: 36px; height: 36px; border-radius: 50%; border: 4px solid ${color}; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 18px;">${emoji}</div>`,
+                iconSize: [36, 36],
+                iconAnchor: [18, 18]
             });
         }
 
@@ -243,7 +265,7 @@
         reportes.forEach(function(reporte) {
             if (reporte.lat && reporte.lng) {
                 var color = getMarkerColor(reporte.estado);
-                var icon = createCustomIcon(color);
+                var icon = createCustomIcon(color, reporte.servicio);
 
                 var marker = L.marker([reporte.lat, reporte.lng], { icon: icon })
                     .bindPopup(`
