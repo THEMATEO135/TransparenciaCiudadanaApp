@@ -9,7 +9,10 @@
     <!-- Fuentes y librerías externas -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
+    <!-- Leaflet CSS para el mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <!-- Tu CSS personalizado -->
    <link rel="stylesheet" href="{{ asset('css/transparencia.css') }}">
 
@@ -22,14 +25,6 @@
                 <div style="width: 160px; height: 50px; background: linear-gradient(135deg, #ff6600, #e55a00); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.1rem; margin: 0 auto;">
                     COMPENSAR
                 </div>
-            </div>
-            <div class="nav-buttons">
-                <a href="{{ route('reportes.historial') }}" class="btn-outline-primary" aria-label="Ver mis reportes enviados">
-                    <i class="fas fa-history"></i>Ver Mis Reportes
-                </a>
-                <a href="{{ route('admin.login') }}" class="btn-primary-custom" aria-label="Iniciar sesión como administrador">
-                    <i class="fas fa-sign-in-alt"></i>Iniciar Sesión
-                </a>
             </div>
             <h1 class="hero-title">¿Tienes problemas con alguno de estos servicios?</h1>
             <p class="hero-subtitle">Reporta fallas de manera rápida y sencilla en nuestros servicios principales</p>
@@ -55,6 +50,16 @@
                 <i class="fas fa-headset" style="margin-right: 0.5rem;"></i>
                 ¡Estamos aquí para ayudarte las 24 horas!
             </div>
+
+            <!-- Nav Buttons - Relocated -->
+            <div class="nav-buttons" style="margin-top: 2rem;">
+                <a href="{{ route('reportes.historial') }}" class="btn-outline-primary" aria-label="Ver mis reportes enviados">
+                    <i class="fas fa-history"></i>Ver Mis Reportes
+                </a>
+                <a href="{{ route('admin.login') }}" class="btn-primary-custom" aria-label="Iniciar sesión como administrador">
+                    <i class="fas fa-sign-in-alt"></i>Iniciar Sesión
+                </a>
+            </div>
         </div>
 
         <!-- Right Section - Form -->
@@ -69,7 +74,7 @@
                     <p>Por favor, selecciona un servicio arriba para habilitar el formulario</p>
                 </div>
 
-                <form id="reportForm" method="POST">
+                <form id="reportForm" method="POST" action="{{ route('reportes.store') }}">
                     @csrf {{-- ¡Directiva de Laravel para el token CSRF! --}}
                     
                     <div class="form-group has-icon">
@@ -147,31 +152,29 @@
                         </div>
                     </div>
 
-                    <div class="location-section">
-                        <div class="location-header">
-                            <span class="location-title">
-                                <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: #ff6600;"></i>
-                                Ubicación (Opcional)
-                            </span>
-                            <button type="button" class="get-location-btn" id="getLocationBtn" onclick="getCurrentLocation(event)" disabled>
-                                <i class="fas fa-crosshairs"></i>
-                                Obtener ubicación
-                            </button>
+                    <!-- Hidden location fields - auto-populated on submit -->
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+
+                    <!-- Location feedback (only shown when needed) -->
+                    <div class="location-status" id="locationStatus" style="display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="locationStatusText"></span>
+                    </div>
+
+                    <!-- Map selector (shown only if geolocation fails) -->
+                    <div id="mapSelector" style="display: none; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label for="mapSearch" class="form-label">
+                                <i class="fas fa-search" style="margin-right: 0.5rem; color: #ff6600;"></i>
+                                Buscar ubicación en el mapa
+                            </label>
+                            <input type="text" class="form-control" id="mapSearch" placeholder="Busca tu dirección...">
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="latitude" class="form-label">Latitud</label>
-                                <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Auto-detectar" readonly disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="longitude" class="form-label">Longitud</label>
-                                <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Auto-detectar" readonly disabled>
-                            </div>
-                        </div>
-                        <div class="location-status" id="locationStatus">
-                            <i class="fas fa-info-circle"></i>
-                            Presiona "Obtener ubicación" para incluir tu ubicación actual
-                        </div>
+                        <div id="map" style="width: 100%; height: 400px; border-radius: 12px; margin-top: 1rem;"></div>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+                            <i class="fas fa-info-circle"></i> Busca tu dirección o haz clic en el mapa para marcar la ubicación
+                        </p>
                     </div>
 
                     <div class="submit-container">
@@ -187,8 +190,10 @@
     </div>
 
     <!-- Tus scripts -->
+    <!-- Leaflet JS para el mapa -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="{{ asset('js/reporte.js') }}"></script>
+    <script src="{{ asset('js/reporte.js') }}"></script>
 
 </body>
 </html>

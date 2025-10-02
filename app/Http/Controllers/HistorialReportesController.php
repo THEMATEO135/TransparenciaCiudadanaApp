@@ -52,22 +52,19 @@ class HistorialReportesController extends Controller
             'verified' => false
         ]);
 
-        // Enviar el correo
+        // Enviar el correo usando queue
         try {
-            Mail::send('emails.otp', ['code' => $code], function ($message) use ($email) {
-                $message->to($email)
-                    ->subject('Código de Verificación - Transparencia Ciudadana');
-            });
+            \App\Jobs\SendOtpEmail::dispatch($email, $code);
 
-            Log::info("OTP enviado a {$email}: {$code}");
+            Log::info("OTP generado para {$email} y enviado a queue");
 
             return redirect()->route('reportes.historial.verificar', ['email' => $email])
                 ->with('success', 'Se ha enviado un código de verificación a tu correo electrónico.');
 
         } catch (\Exception $e) {
-            Log::error("Error enviando OTP: " . $e->getMessage());
+            Log::error("Error al encolar envío de OTP: " . $e->getMessage());
 
-            return back()->with('error', 'Hubo un error al enviar el código. Por favor intenta nuevamente.');
+            return back()->with('error', 'Hubo un error al procesar tu solicitud. Por favor intenta nuevamente.');
         }
     }
 

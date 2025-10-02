@@ -1,51 +1,80 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reporte;
 use App\Models\Servicio;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // Totales
-        $totalReportes = Reporte::count();
-        $totalServicios = Servicio::count();
-        $totalUsuarios = Reporte::distinct('nombres')->count('nombres');
+        // Cache de estadísticas generales (10 minutos)
+        $stats = Cache::remember('dashboard_stats', 600, function () {
+            return [
+                'totalReportes' => Reporte::count(),
+                'totalServicios' => Servicio::count(),
+                'totalUsuarios' => Reporte::distinct('nombres')->count('nombres'),
+                'pendientes' => Reporte::where('estado', 'pendiente')->count(),
+                'enProceso' => Reporte::where('estado', 'en_proceso')->count(),
+                'resueltos' => Reporte::where('estado', 'resuelto')->count(),
+            ];
+        });
 
-        // Estadísticas por estado
-        $pendientes = Reporte::where('estado', 'pendiente')->count();
-        $enProceso = Reporte::where('estado', 'en_proceso')->count();
-        $resueltos = Reporte::where('estado', 'resuelto')->count();
+        $totalReportes = $stats['totalReportes'];
+        $totalServicios = $stats['totalServicios'];
+        $totalUsuarios = $stats['totalUsuarios'];
+        $pendientes = $stats['pendientes'];
+        $enProceso = $stats['enProceso'];
+        $resueltos = $stats['resueltos'];
 
-        // Comparativa mensual (últimos 6 meses)
-        $mesesComparativa = [];
-        $valoresComparativa = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $fecha = now()->subMonths($i);
-            $mesesComparativa[] = $fecha->format('M Y');
-            $valoresComparativa[] = Reporte::whereYear('created_at', $fecha->year)
-                ->whereMonth('created_at', $fecha->month)
-                ->count();
-        }
+        // Cache de comparativas mensuales (30 minutos)
+        $comparativaMensual = Cache::remember('dashboard_comparativa_mensual', 1800, function () {
+            $mesesComparativa = [];
+            $valoresComparativa = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $fecha = now()->subMonths($i);
+                $mesesComparativa[] = $fecha->format('M Y');
+                $valoresComparativa[] = Reporte::whereYear('created_at', $fecha->year)
+                    ->whereMonth('created_at', $fecha->month)
+                    ->count();
+            }
+            return compact('mesesComparativa', 'valoresComparativa');
+        });
 
-        // Comparativa anual (últimos 3 años)
-        $añosComparativa = [];
-        $valoresAnuales = [];
-        for ($i = 2; $i >= 0; $i--) {
-            $año = now()->subYears($i)->year;
-            $añosComparativa[] = $año;
-            $valoresAnuales[] = Reporte::whereYear('created_at', $año)->count();
-        }
+        $mesesComparativa = $comparativaMensual['mesesComparativa'];
+        $valoresComparativa = $comparativaMensual['valoresComparativa'];
 
-        // Reportes por servicio
-        $labelsServicios = Servicio::pluck('nombre')->toArray();
-        $valoresServicios = collect($labelsServicios)->map(function ($servicio) {
-            return Reporte::whereHas('servicio', fn($q) => $q->where('nombre', $servicio))->count();
-        })->toArray();
+        // Cache de comparativas anuales (1 hora)
+        $comparativaAnual = Cache::remember('dashboard_comparativa_anual', 3600, function () {
+            $añosComparativa = [];
+            $valoresAnuales = [];
+            for ($i = 2; $i >= 0; $i--) {
+                $año = now()->subYears($i)->year;
+                $añosComparativa[] = $año;
+                $valoresAnuales[] = Reporte::whereYear('created_at', $año)->count();
+            }
+            return compact('añosComparativa', 'valoresAnuales');
+        });
+
+        $añosComparativa = $comparativaAnual['añosComparativa'];
+        $valoresAnuales = $comparativaAnual['valoresAnuales'];
+
+        // Cache de servicios (1 hora - raramente cambian)
+        $servicios = Cache::remember('servicios_all', 3600, function () {
+            return Servicio::all();
+        });
+
+        $labelsServicios = $servicios->pluck('nombre')->toArray();
+
+        // Cache de reportes por servicio (15 minutos)
+        $valoresServicios = Cache::remember('dashboard_reportes_por_servicio', 900, function () use ($labelsServicios) {
+            return collect($labelsServicios)->map(function ($servicio) {
+                return Reporte::whereHas('servicio', fn($q) => $q->where('nombre', $servicio))->count();
+            })->toArray();
+        });
 
         // Reportes por mes (para compatibilidad con la vista antigua)
         $labelsMeses = collect($mesesComparativa);

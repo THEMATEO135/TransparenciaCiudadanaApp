@@ -39,6 +39,11 @@ class ReporteController extends Controller
             $reporte = Reporte::create($validated);
             Log::info('Reporte creado exitosamente', ['id' => $reporte->id]);
 
+            // Invalidar cache de estadísticas del dashboard
+            \Cache::forget('dashboard_stats');
+            \Cache::forget('dashboard_comparativa_mensual');
+            \Cache::forget('dashboard_reportes_por_servicio');
+
             // Preparar payload con datos adicionales
             $payload = array_merge($reporte->toArray(), [
                 'created_at_formatted' => $reporte->created_at->format('Y-m-d H:i:s'),
@@ -203,10 +208,17 @@ class ReporteController extends Controller
         ]);
     }
 
-    public function consulta(Request $request) 
+    public function consulta(Request $request)
     {
-        $cedula = $request->query('cedula');
-        $reportes = Reporte::where('cedula', $cedula)->get();
+        $validated = $request->validate([
+            'correo' => 'required|email|max:255'
+        ]);
+
+        $reportes = Reporte::where('correo', $validated['correo'])
+            ->with('servicio')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('reportes.consultar', compact('reportes'));
     }
 }

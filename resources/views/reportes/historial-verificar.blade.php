@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/transparencia.css') }}">
     <style>
-        .verification-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; }
+        .verification-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ff8c42 0%, #ff6600 50%, #e55a00 100%); padding: 2rem; }
         .verification-card { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 3rem; max-width: 500px; width: 100%; }
         .verification-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #ff6600, #e55a00); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
         .verification-icon i { font-size: 2rem; color: white; }
@@ -41,7 +41,7 @@
             </form>
 
             <div style="text-align: center; margin-top: 1.5rem;">
-                <a href="{{ route('reportes.historial') }}" style="color: #667eea; text-decoration: none;"><i class="fas fa-arrow-left"></i> Solicitar nuevo código</a>
+                <a href="{{ route('reportes.historial') }}" style="color: #2d3748; text-decoration: none; font-weight: 600; transition: all 0.3s; padding: 0.5rem 1rem; border-radius: 8px; display: inline-block;" onmouseover="this.style.background='#f7fafc'" onmouseout="this.style.background='transparent'"><i class="fas fa-arrow-left"></i> Solicitar nuevo código</a>
             </div>
         </div>
     </div>

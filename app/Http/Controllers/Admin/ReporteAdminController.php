@@ -79,6 +79,11 @@ class ReporteAdminController extends Controller
 
         $reporte->update($validated);
 
+        // Invalidar cache de estadísticas del dashboard
+        \Cache::forget('dashboard_stats');
+        \Cache::forget('dashboard_comparativa_mensual');
+        \Cache::forget('dashboard_reportes_por_servicio');
+
         // Registrar actividad
         \App\Models\ActivityLog::log(
             'update',

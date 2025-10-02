@@ -17,6 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
         descTextarea: document.getElementById('descripcion')
     };
 
+    // Variables globales del scope
+    const form = DOM.form;
+    const result = DOM.result;
+    const submitBtn = DOM.submitBtn;
+    const locationStatus = DOM.locationStatus;
+
     let serviceSelected = false;
 
     // Deshabilitar todos los controles al inicio
@@ -248,97 +254,133 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Geolocation functionality
-    window.getCurrentLocation = function(evt) {
-        if (!serviceSelected) return;
+    // Automatic geolocation functionality (called on submit)
+    let map = null;
+    let marker = null;
 
-        const btn = evt?.currentTarget || evt?.target || document.querySelector('.get-location-btn');
-        if (!btn) return;
+    function tryGetLocation() {
+        return new Promise((resolve, reject) => {
+            if (!window.isSecureContext && location.hostname !== 'localhost') {
+                reject(new Error('HTTPS requerido'));
+                return;
+            }
 
-        const originalContent = btn.innerHTML;
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
 
-        if (!window.isSecureContext && location.hostname !== 'localhost') {
-            locationStatus.innerHTML = '<i class="fas fa-lock"></i> Activa HTTPS (o prueba en localhost) para usar geolocalización.';
-            locationStatus.style.color = 'var(--danger-color)';
-            return;
-        }
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        });
+                    },
+                    function (error) {
+                        reject(error);
+                    },
+                    options
+                );
+            } else {
+                reject(new Error('Geolocalización no soportada'));
+            }
+        });
+    }
 
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo...';
-        btn.disabled = true;
+    function showMapSelector() {
+        const mapSelector = document.getElementById('mapSelector');
+        const locationStatus = document.getElementById('locationStatus');
+        const locationStatusText = document.getElementById('locationStatusText');
 
-        locationStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo ubicación...';
+        if (!mapSelector) return;
+
+        mapSelector.style.display = 'block';
+        locationStatus.style.display = 'block';
         locationStatus.style.color = 'var(--primary-color)';
+        locationStatusText.textContent = 'No pudimos obtener tu ubicación automáticamente. Por favor, selecciónala en el mapa.';
 
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 300000
-        };
+        // Initialize map if not already initialized
+        if (!map) {
+            // Default to Bogotá center
+            map = L.map('map').setView([4.60971, -74.08175], 12);
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function (position) {
-                    const latInput = document.getElementById('latitude');
-                    const lngInput = document.getElementById('longitude');
-                    if (latInput) latInput.value = position.coords.latitude.toFixed(6);
-                    if (lngInput) lngInput.value = position.coords.longitude.toFixed(6);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
 
-                    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
-                        .then(r => r.json())
-                        .then(d => {
-                            if (d && d.display_name) {
-                                const dir = document.getElementById('direccion');
-                                if (dir && !dir.value) dir.value = d.display_name;
-                            }
-                        })
-                        .catch(()=>{});
+            // Add click event to map
+            map.on('click', function(e) {
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
 
-                    btn.innerHTML = '<i class="fas fa-check"></i> Ubicación obtenida';
-                    btn.style.background = 'var(--success-color)';
+                // Update hidden inputs
+                document.getElementById('latitude').value = lat.toFixed(6);
+                document.getElementById('longitude').value = lng.toFixed(6);
 
-                    locationStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ubicación obtenida correctamente';
-                    locationStatus.style.color = 'var(--success-color)';
+                // Remove existing marker
+                if (marker) {
+                    map.removeLayer(marker);
+                }
 
-                    setTimeout(() => {
-                        btn.innerHTML = originalContent;
-                        btn.style.background = 'var(--accent-color)';
-                        btn.disabled = false;
-                    }, 2000);
-                },
-                function (error) {
-                    let errorMessage = 'Error al obtener ubicación';
-                    if (error.code === error.PERMISSION_DENIED)  errorMessage = 'Permiso denegado para acceder a la ubicación';
-                    if (error.code === error.POSITION_UNAVAILABLE) errorMessage = 'Ubicación no disponible';
-                    if (error.code === error.TIMEOUT)             errorMessage = 'Tiempo de espera agotado';
+                // Add new marker
+                marker = L.marker([lat, lng]).addTo(map);
 
-                    btn.innerHTML = '<i class="fas fa-times"></i> Error';
-                    btn.style.background = 'var(--danger-color)';
+                locationStatusText.textContent = 'Ubicación seleccionada correctamente en el mapa.';
+                locationStatus.style.color = 'var(--success-color)';
+            });
 
-                    locationStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + errorMessage;
-                    locationStatus.style.color = 'var(--danger-color)';
+            // Search functionality
+            const searchInput = document.getElementById('mapSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const query = this.value;
+                        if (query) {
+                            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Bogotá, Colombia')}`)
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (data && data.length > 0) {
+                                        const lat = parseFloat(data[0].lat);
+                                        const lon = parseFloat(data[0].lon);
 
-                    setTimeout(() => {
-                        btn.innerHTML = originalContent;
-                        btn.style.background = 'var(--accent-color)';
-                        btn.disabled = false;
-                    }, 3000);
-                },
-                options
-            );
-        } else {
-            btn.innerHTML = '<i class="fas fa-times"></i> No compatible';
-            btn.style.background = 'var(--danger-color)';
-            locationStatus.innerHTML = '<i class="fas fa-times-circle"></i> Geolocalización no soportada';
-            locationStatus.style.color = 'var(--danger-color)';
-            setTimeout(() => {
-                btn.innerHTML = originalContent;
-                btn.style.background = 'var(--accent-color)';
-                btn.disabled = false;
-            }, 3000);
+                                        map.setView([lat, lon], 16);
+
+                                        if (marker) {
+                                            map.removeLayer(marker);
+                                        }
+
+                                        marker = L.marker([lat, lon]).addTo(map);
+
+                                        document.getElementById('latitude').value = lat.toFixed(6);
+                                        document.getElementById('longitude').value = lon.toFixed(6);
+
+                                        locationStatusText.textContent = 'Ubicación encontrada y seleccionada.';
+                                        locationStatus.style.color = 'var(--success-color)';
+                                    } else {
+                                        alert('No se encontró la dirección. Intenta con otra búsqueda.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Error buscando dirección:', err);
+                                    alert('Error al buscar la dirección.');
+                                });
+                        }
+                    }
+                });
+            }
         }
-    };
 
-    // Form submission
+        // Force map to resize
+        setTimeout(() => {
+            if (map) map.invalidateSize();
+        }, 100);
+    }
+
+    // Form submission with automatic geolocation
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -347,58 +389,120 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             result.classList.remove('show');
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            // Try to get location automatically if not already set
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
 
-            try {
-                const resp = await fetch('/reportes', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify(data)
-                });
+            if (!latInput.value || !lngInput.value) {
+                const locationStatus = document.getElementById('locationStatus');
+                const locationStatusText = document.getElementById('locationStatusText');
 
-                if (!resp.ok) {
-                    throw new Error(`HTTP error! status: ${resp.status}`);
-                }
+                locationStatus.style.display = 'block';
+                locationStatus.style.color = 'var(--primary-color)';
+                locationStatusText.textContent = 'Obteniendo tu ubicación...';
 
-                const json = await resp.json();
+                try {
+                    const coords = await tryGetLocation();
+                    latInput.value = coords.latitude.toFixed(6);
+                    lngInput.value = coords.longitude.toFixed(6);
 
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
+                    locationStatus.style.color = 'var(--success-color)';
+                    locationStatusText.textContent = 'Ubicación obtenida correctamente.';
 
-                if (json.ok) {
-                    result.textContent = '¡Reporte enviado exitosamente! ID: ' + json.id;
-                    result.className = 'result-message success show';
+                    // Continue with form submission after getting location
+                    setTimeout(() => submitFormData(), 500);
+                    return;
+                } catch (error) {
+                    console.log('Error obteniendo ubicación:', error);
+                    // Show map selector
+                    showMapSelector();
 
-                    setTimeout(() => {
-                        form.reset();
-                        result.classList.remove('show');
-                        document.querySelectorAll('.service-card').forEach(card => {
-                            card.classList.remove('selected');
-                        });
-                        if (locationStatus) {
-                            locationStatus.innerHTML = '<i class="fas fa-info-circle"></i> Presiona "Obtener ubicación" para incluir tu ubicación actual';
-                            locationStatus.style.color = 'var(--dark-gray)';
-                        }
-                        disableFormControls();
-                        serviceSelected = false;
-                    }, 5000);
-                } else {
-                    result.textContent = 'Error al enviar el reporte: ' + (json.error || JSON.stringify(json));
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+
+                    result.textContent = 'Por favor, selecciona tu ubicación en el mapa antes de enviar el reporte.';
                     result.className = 'result-message error show';
+                    return;
                 }
-            } catch (err) {
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-
-                result.textContent = 'Error de conexión: ' + err.message;
-                result.className = 'result-message error show';
-                console.error('Error:', err);
             }
+
+            // If location is already set, submit directly
+            submitFormData();
         });
+    }
+
+    async function submitFormData() {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Asegurar que latitude y longitude se incluyan explícitamente
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+
+        if (latInput && latInput.value) {
+            data.latitude = latInput.value;
+        }
+        if (lngInput && lngInput.value) {
+            data.longitude = lngInput.value;
+        }
+
+        console.log('Datos a enviar:', data); // Debug
+
+        try {
+            const resp = await fetch('/reportes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!resp.ok) {
+                throw new Error(`HTTP error! status: ${resp.status}`);
+            }
+
+            const json = await resp.json();
+
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+
+            if (json.ok) {
+                result.textContent = '¡Reporte enviado exitosamente! ID: ' + json.id;
+                result.className = 'result-message success show';
+
+                setTimeout(() => {
+                    form.reset();
+                    result.classList.remove('show');
+                    document.querySelectorAll('.service-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+
+                    // Hide and reset location elements
+                    const locationStatus = document.getElementById('locationStatus');
+                    const mapSelector = document.getElementById('mapSelector');
+                    if (locationStatus) locationStatus.style.display = 'none';
+                    if (mapSelector) mapSelector.style.display = 'none';
+                    if (map && marker) {
+                        map.removeLayer(marker);
+                        marker = null;
+                    }
+
+                    disableFormControls();
+                    serviceSelected = false;
+                }, 5000);
+            } else {
+                result.textContent = 'Error al enviar el reporte: ' + (json.error || JSON.stringify(json));
+                result.className = 'result-message error show';
+            }
+        } catch (err) {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+
+            result.textContent = 'Error de conexión: ' + err.message;
+            result.className = 'result-message error show';
+            console.error('Error:', err);
+        }
     }
 
 

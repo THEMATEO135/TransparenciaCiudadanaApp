@@ -16,7 +16,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6600 50%, #e55a00 100%);
             padding: 2rem;
         }
         .verification-card {
@@ -73,13 +73,16 @@
         .back-link {
             display: inline-block;
             margin-top: 1.5rem;
-            color: #667eea;
+            color: #2d3748;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
         }
         .back-link:hover {
-            color: #764ba2;
+            background: #f7fafc;
+            transform: translateX(-3px);
         }
     </style>
 </head>

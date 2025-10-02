@@ -3,7 +3,7 @@
         'name' => 'mateo/transparencia-ciudadana',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b724b855db13a14a1be2223847466c3e05cadacd',
+        'reference' => '86465e2ff1b47ef369c916fb0f270a0f97e30c6f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -586,7 +586,7 @@
         'mateo/transparencia-ciudadana' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b724b855db13a14a1be2223847466c3e05cadacd',
+            'reference' => '86465e2ff1b47ef369c916fb0f270a0f97e30c6f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -5,7 +5,14 @@
       "Bash(composer:*)",
       "Bash(php:*)",
       "Bash(findstr:*)",
-      "Read(//c/xampp/php/**)"
+      "Read(//c/xampp/php/**)",
+      "Bash(dir:*)",
+      "Bash(cat:*)",
+      "Bash(npm install)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(del nul)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
