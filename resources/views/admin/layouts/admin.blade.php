@@ -9,8 +9,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @yield('head')
+
+    <!-- Variables globales para JavaScript -->
+    <script>
+        window.userId = {{ auth()->id() ?? 'null' }};
+        window.userEmail = "{{ auth()->user()->email ?? '' }}";
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg admin-navbar" role="navigation" aria-label="Navegación principal del administrador">
@@ -65,6 +72,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
     @yield('scripts')
 </body>
 </html>

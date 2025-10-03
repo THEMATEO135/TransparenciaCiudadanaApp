@@ -77,8 +77,9 @@
                         <tr>
                             <th>ID</th>
                             <th>Servicio</th>
+                            <th>Ciudad</th>
+                            <th>Proveedor</th>
                             <th>Descripción</th>
-                            <th>Dirección</th>
                             <th>Estado</th>
                             <th>Fecha</th>
                         </tr>
@@ -88,8 +89,9 @@
                         <tr>
                             <td><strong>#{{ $reporte->id }}</strong></td>
                             <td>{{ $reporte->servicio->nombre ?? 'N/A' }}</td>
-                            <td>{{ Str::limit($reporte->descripcion, 60) }}</td>
-                            <td>{{ $reporte->direccion ?? 'No especificada' }}</td>
+                            <td>{{ $reporte->ciudad->nombre ?? 'N/A' }}</td>
+                            <td>{{ $reporte->proveedor->nombre ?? 'N/A' }}</td>
+                            <td>{{ Str::limit($reporte->descripcion, 50) }}</td>
                             <td>
                                 @if($reporte->estado == 'pendiente')
                                     <span class="badge" style="background: #f39c12; color: white;">⏳ Pendiente</span>

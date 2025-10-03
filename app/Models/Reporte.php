@@ -14,6 +14,8 @@ class Reporte extends Model
         'correo',
         'telefono',
         'servicio_id',
+        'ciudad_id',
+        'proveedor_id',
         'descripcion',
         'direccion',
         'localidad',
@@ -33,5 +35,17 @@ class Reporte extends Model
     public function servicio()
     {
         return $this->belongsTo(Servicio::class);
+    }
+
+    // Relación con ciudad
+    public function ciudad()
+    {
+        return $this->belongsTo(Ciudad::class);
+    }
+
+    // Relación con proveedor
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class);
     }
 }

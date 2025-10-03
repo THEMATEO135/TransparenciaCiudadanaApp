@@ -27,6 +27,8 @@ class ReporteController extends Controller
                 'correo' => 'required|email|max:255',
                 'telefono' => 'required|string|max:20',
                 'servicio_id' => 'required|integer|exists:servicios,id',
+                'ciudad_id' => 'nullable|integer|exists:ciudades,id',
+                'proveedor_id' => 'nullable|integer|exists:proveedores,id',
                 'descripcion' => 'required|string|max:1000',
                 'direccion' => 'nullable|string|max:255',
                 'localidad' => 'nullable|string|max:100',
@@ -38,6 +40,18 @@ class ReporteController extends Controller
             // Crear el reporte
             $reporte = Reporte::create($validated);
             Log::info('Reporte creado exitosamente', ['id' => $reporte->id]);
+
+            // Crear notificación para admins
+            $admins = \App\Models\User::where('role', 'admin')->where('is_active', true)->get();
+            foreach ($admins as $admin) {
+                \App\Models\Notification::createFor(
+                    $admin->id,
+                    'nuevo_reporte',
+                    'Nuevo reporte recibido',
+                    "Se ha recibido un reporte de {$reporte->nombres} sobre " . ($reporte->servicio->nombre ?? 'N/A'),
+                    route('admin.reportes.edit', $reporte->id)
+                );
+            }
 
             // Invalidar cache de estadísticas del dashboard
             \Cache::forget('dashboard_stats');
@@ -215,7 +229,7 @@ class ReporteController extends Controller
         ]);
 
         $reportes = Reporte::where('correo', $validated['correo'])
-            ->with('servicio')
+            ->with(['servicio', 'ciudad', 'proveedor'])
             ->orderBy('created_at', 'desc')
             ->get();
 

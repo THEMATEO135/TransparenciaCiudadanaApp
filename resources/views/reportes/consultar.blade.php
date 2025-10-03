@@ -10,7 +10,15 @@
 @if(isset($reportes))
     <ul>
     @foreach($reportes as $reporte)
-        <li>{{ $reporte->descripcion }} - Estado: {{ $reporte->estado }}</li>
+        <li>
+            {{ $reporte->descripcion }} - Estado: {{ $reporte->estado }}
+            @if($reporte->ciudad)
+                - Ciudad: {{ $reporte->ciudad->nombre }}
+            @endif
+            @if($reporte->proveedor)
+                - Proveedor: {{ $reporte->proveedor->nombre }}
+            @endif
+        </li>
     @endforeach
     </ul>
 @endif

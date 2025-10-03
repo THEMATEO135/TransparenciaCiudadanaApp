@@ -104,26 +104,25 @@
                         <i class="fas fa-phone input-icon"></i>
                     </div>
 
-                    <div class="form-group">
-                        <label for="servicio_id" class="form-label">
-                            <i class="fas fa-cogs" style="margin-right: 0.5rem; color: #ff6600;"></i>
-                            Tipo de Servicio *
-                        </label>
-                     <select class="form-select" id="servicio_id" name="servicio_id" required disabled>
-    <option value="">Selecciona el servicio afectado</option>
-    <option value="1">⚡ Energía Eléctrica</option>
-    <option value="2">📶 Internet</option>
-    <option value="3">🔥 Gas Natural</option>
-    <option value="4">💧 Acueducto</option>
-</select>
+                    <!-- Resumen de selección -->
+                    <div class="selection-summary" id="selectionSummary" style="display: none;">
+                        <div class="summary-content">
+                            <i class="fas fa-info-circle"></i>
+                            <p id="summaryText">Reporte para <strong id="summaryServicio">-</strong> del proveedor <strong id="summaryProveedor">-</strong> en <strong id="summaryCiudad">-</strong></p>
+                        </div>
                     </div>
+
+                    <!-- Hidden fields -->
+                    <input type="hidden" id="servicio_id" name="servicio_id">
+                    <input type="hidden" id="ciudad_id" name="ciudad_id">
+                    <input type="hidden" id="proveedor_id" name="proveedor_id">
 
                     <div class="form-group">
                         <label for="descripcion" class="form-label">
                             <i class="fas fa-comment-alt" style="margin-right: 0.5rem; color: #ff6600;"></i>
                             Descripción del Problema *
                         </label>
-                        <textarea class="form-control form-textarea" id="descripcion" name="descripcion" rows="3" 
+                        <textarea class="form-control form-textarea" id="descripcion" name="descripcion" rows="3"
                                 placeholder="Describe detalladamente el problema..." required disabled></textarea>
                     </div>
 
@@ -186,6 +185,99 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de selección de Departamento -->
+    <div id="departamentoModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="modal-close-btn" id="closeFromDepartamento">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 class="modal-title">
+                    <i class="fas fa-map"></i>
+                    Selecciona tu Departamento
+                </h2>
+                <p class="modal-subtitle">¿En qué departamento te encuentras?</p>
+            </div>
+            <div class="modal-body">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="departamentoSearch" placeholder="Buscar departamento..." autocomplete="off">
+                </div>
+                <div id="departamentosList" class="departamentos-grid">
+                    <!-- Los departamentos se cargarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de selección de Ciudad -->
+    <div id="ciudadModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="modal-back-btn" id="backFromCiudad">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="modal-title">
+                    <i class="fas fa-map-marked-alt"></i>
+                    Selecciona tu Municipio
+                </h2>
+                <p class="modal-subtitle" id="departamentoSeleccionado">Departamento: <strong></strong></p>
+            </div>
+            <div class="modal-body">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="ciudadSearch" placeholder="Buscar municipio..." autocomplete="off">
+                </div>
+                <div id="ciudadesList" class="ciudades-grid">
+                    <!-- Las ciudades se cargarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de selección de Proveedor -->
+    <div id="proveedorModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <button class="modal-back-btn" id="backFromProveedor">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="modal-title">
+                    <i class="fas fa-building"></i>
+                    Selecciona tu Proveedor
+                </h2>
+                <p class="modal-subtitle" id="ciudadSeleccionada">Ciudad: <strong></strong></p>
+            </div>
+            <div class="modal-body">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="proveedorSearch" placeholder="Buscar proveedor..." autocomplete="off">
+                </div>
+                <div id="proveedoresList" class="proveedores-grid">
+                    <!-- Los proveedores se cargarán dinámicamente -->
+                </div>
+                <button type="button" class="btn-skip" id="skipProveedorBtn">
+                    <i class="fas fa-forward"></i>
+                    Omitir (No sé mi proveedor)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerta de ubicación -->
+    <div id="locationAlert" class="location-alert">
+        <div class="alert-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="alert-text">
+                <strong>¡Atención!</strong>
+                <p>Tu ubicación GPS no coincide con la ciudad seleccionada. Por favor, verifica tu ubicación en el mapa.</p>
+            </div>
+            <button class="alert-close" onclick="closeLocationAlert()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 

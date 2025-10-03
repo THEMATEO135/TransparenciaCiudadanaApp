@@ -7,13 +7,21 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\PasswordResetController;
 use App\Http\Controllers\Admin\TwoFactorController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\DashboardStatsController;
 use App\Http\Controllers\HistorialReportesController;
+use App\Http\Controllers\Api\ProveedorController as ApiProveedorController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
+// Rutas API
+Route::prefix('api')->name('api.')->group(function () {
+    Route::get('/proveedores', [ApiProveedorController::class, 'getPorCiudadYServicio'])->name('proveedores.filtrar');
+    Route::get('/ciudades', [ApiProveedorController::class, 'getCiudades'])->name('ciudades.listar');
+});
 
 // Rutas públicas (ciudadanos)
 Route::get('/', [ReporteController::class, 'index'])->name('home');
@@ -70,4 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
     Route::get('/notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+    // API para actualizaciones en tiempo real
+    Route::get('/dashboard/stats', [DashboardStatsController::class, 'stats'])->name('dashboard.stats');
 });
