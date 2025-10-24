@@ -79,6 +79,12 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
+    
+    //Banderas Departamentos
+    Route::view('/ciudades', 'ciudades.index')->name('ciudades.index');
+
+
+    
     // API para actualizaciones en tiempo real
     Route::get('/dashboard/stats', [DashboardStatsController::class, 'stats'])->name('dashboard.stats');
 });
