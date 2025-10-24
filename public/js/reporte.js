@@ -132,28 +132,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function renderDepartamentos(departamentos) {
-        if (!DOM.departamentosList) return;
+function renderDepartamentos(departamentos) {
+    if (!DOM.departamentosList) return;
 
-        DOM.departamentosList.innerHTML = '';
+    DOM.departamentosList.innerHTML = '';
 
-        if (departamentos.length === 0) {
-            DOM.departamentosList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 2rem;">No se encontraron departamentos</p>';
-            return;
-        }
-
-        departamentos.forEach(departamento => {
-            const card = document.createElement('div');
-            card.className = 'departamento-card';
-            card.innerHTML = `
-                <div class="departamento-icon">🇨🇴</div>
-                <div class="departamento-name">${departamento.nombre}</div>
-                <div class="departamento-count">${departamento.count} ${departamento.count === 1 ? 'municipio' : 'municipios'}</div>
-            `;
-            card.addEventListener('click', () => seleccionarDepartamento(departamento));
-            DOM.departamentosList.appendChild(card);
-        });
+    if (departamentos.length === 0) {
+        DOM.departamentosList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 2rem;">No se encontraron departamentos</p>';
+        return;
     }
+
+    departamentos.forEach(departamento => {
+        const card = document.createElement('div');
+        card.className = 'departamento-card';
+
+        const nombreDepartamento = departamento.nombre
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '-');
+
+        const banderaDepartamento = `/img/banderas/departamentos/${nombreDepartamento}.png`;
+
+        card.innerHTML = `
+            <div class="departamento-icon">
+                <img src="${banderaDepartamento}" 
+                    alt="${departamento.nombre}" 
+                    onerror="this.onerror=null;this.src='/img/banderas/colombia.png';" 
+                    class="bandera-img">
+            </div>
+            <div class="departamento-name">${departamento.nombre}</div>
+            <div class="departamento-count">${departamento.count} ${departamento.count === 1 ? 'municipio' : 'municipios'}</div>
+        `;
+        card.addEventListener('click', () => seleccionarDepartamento(departamento));
+        DOM.departamentosList.appendChild(card);
+    });
+}
 
     // Búsqueda de departamentos
     if (DOM.departamentoSearch) {
@@ -167,27 +180,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderCiudades(ciudades) {
-        if (!DOM.ciudadesList) return;
+    if (!DOM.ciudadesList) return;
 
-        DOM.ciudadesList.innerHTML = '';
+    DOM.ciudadesList.innerHTML = '';
 
-        if (ciudades.length === 0) {
-            DOM.ciudadesList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 2rem;">No se encontraron ciudades</p>';
-            return;
-        }
-
-        ciudades.forEach(ciudad => {
-            const card = document.createElement('div');
-            card.className = 'ciudad-card';
-            card.innerHTML = `
-                <div class="ciudad-icon">🇨🇴</div>
-                <div class="ciudad-name">${ciudad.nombre}</div>
-                <div class="ciudad-departamento">${ciudad.departamento}</div>
-            `;
-            card.addEventListener('click', () => seleccionarCiudad(ciudad));
-            DOM.ciudadesList.appendChild(card);
-        });
+    if (ciudades.length === 0) {
+        DOM.ciudadesList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 2rem;">No se encontraron ciudades</p>';
+        return;
     }
+
+    ciudades.forEach(ciudad => {
+        const card = document.createElement('div');
+        card.className = 'ciudad-card';
+
+        const nombreCiudad = ciudad.nombre
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '-');
+
+        const nombreDepartamento = ciudad.departamento
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '-');
+
+        const banderaCiudad = `/img/banderas/ciudades/${nombreCiudad}.png`;
+        const banderaDepartamento = `/img/banderas/departamentos/${nombreDepartamento}.png`;
+        const banderaDefault = `/img/banderas/colombia.png`;
+
+        card.innerHTML = `
+            <div class="ciudad-icon">
+                <img src="${banderaCiudad}" 
+                    alt="${ciudad.nombre}" 
+                    onerror="this.onerror=null;this.src='${banderaDepartamento}';this.onerror=function(){this.src='${banderaDefault}';};" 
+                    class="bandera-img">
+            </div>
+            <div class="ciudad-name">${ciudad.nombre}</div>
+            <div class="ciudad-departamento">${ciudad.departamento}</div>
+        `;
+
+        card.addEventListener('click', () => seleccionarCiudad(ciudad));
+        DOM.ciudadesList.appendChild(card);
+    });
+}
+
 
     // Búsqueda de ciudades
     if (DOM.ciudadSearch) {

@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+
+@extends('admin.layouts.app')
+@section('no_navbar', true)
+
+
+@section('title', 'Reportar Falla')
+
+@section('content')
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -286,6 +294,119 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script src="{{ asset('js/reporte.js') }}"></script>
+    <script>
+(function() {
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const departamentosList = document.getElementById('departamentosList');
+            const ciudadesList = document.getElementById('ciudadesList');
+            const summaryText = document.getElementById('summaryText');
+            const summaryCiudad = document.getElementById('summaryCiudad');
+
+            if (!departamentosList || !ciudadesList || !summaryText) {
+                console.warn('No se encontraron elementos necesarios (departamentosList / ciudadesList / summaryText).');
+                return;
+            }
+
+            const url = '{{ route("api.ciudades.listar") }}';
+            const resp = await fetch(url);
+            if (!resp.ok) return console.error('Error cargando ciudades:', resp.status);
+            const json = await resp.json();
+            if (!json.success) return console.error('API devolvió success=false', json);
+
+            const ciudades = json.data || [];
+            const departamentos = {};
+            ciudades.forEach(c => {
+                const dept = c.departamento || 'Sin Departamento';
+                if (!departamentos[dept]) departamentos[dept] = c.bandera || '/img/banderas/default.png';
+            });
+
+            departamentosList.innerHTML = '';
+            Object.entries(departamentos)
+                .sort((a,b)=>a[0].localeCompare(b[0]))
+                .forEach(([nombre, bandera])=>{
+                    const item = document.createElement('div');
+                    item.className = 'departamento-card';
+                    item.setAttribute('role','button');
+                    item.setAttribute('tabindex','0');
+                    item.innerHTML = `
+                        <img src="${bandera}" alt="Bandera ${nombre}" 
+                            style="width:140px;height:90px;border-radius:10px;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,0.25);">
+                        <p style="margin:10px 0 0;font-size:1.1rem;font-weight:600;">${nombre}</p>
+                    `;
+                    item.addEventListener('click',()=>seleccionarDepartamento(nombre, bandera));
+                    item.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' ')seleccionarDepartamento(nombre, bandera)});
+                    departamentosList.appendChild(item);
+                });
+
+            function renderCiudades(lista) {
+                ciudadesList.innerHTML = '';
+                if (!Array.isArray(lista) || lista.length === 0) {
+                    ciudadesList.innerHTML = '<p style="padding:12px;color:#666;">No hay municipios para este departamento.</p>';
+                    return;
+                }
+                lista.sort((a,b)=>a.nombre.localeCompare(b.nombre)).forEach(ciudad=>{
+                    const d = document.createElement('div');
+                    d.className = 'ciudad-card';
+                    d.innerHTML = `
+                        <img src="${ciudad.bandera}" alt="${ciudad.nombre}" 
+                            style="width:100px;height:65px;border-radius:8px;object-fit:cover;margin-bottom:8px;box-shadow:0 0 6px rgba(0,0,0,0.3);">
+                        <span style="display:block;font-size:1.1rem;font-weight:500;">${ciudad.nombre}</span>
+                    `;
+                    d.addEventListener('click',()=>seleccionarCiudad(ciudad));
+                    d.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' ')seleccionarCiudad(ciudad)});
+                    d.setAttribute('tabindex','0');
+                    ciudadesList.appendChild(d);
+                });
+            }
+
+            function seleccionarDepartamento(nombre, bandera){
+                const deptSel = document.getElementById('departamentoSeleccionado');
+                if (deptSel) {
+                    deptSel.innerHTML = `
+                        Departamento: <strong>${nombre}</strong>
+                        <img src="${bandera}" alt="Bandera" 
+                            style="width:120px;height:80px;margin-left:15px;border-radius:10px;box-shadow:0 0 6px rgba(0,0,0,0.25);vertical-align:middle;">
+                    `;
+                }
+                const filtradas = ciudades.filter(c=>c.departamento===nombre);
+                renderCiudades(filtradas);
+                const modal = document.getElementById('ciudadModal');
+                if (modal) modal.style.display = 'block';
+            }
+
+            function seleccionarCiudad(ciudad){
+                const inputCiudadId=document.getElementById('ciudad_id');
+                if(inputCiudadId)inputCiudadId.value=ciudad.id;
+                if(summaryCiudad)summaryCiudad.textContent=ciudad.nombre;
+                let existing=document.getElementById('summaryBandera');
+                if(!existing){
+                    const img=document.createElement('img');
+                    img.id='summaryBandera';
+                    img.src=ciudad.bandera||'/img/banderas/default.png';
+                    img.alt=`Bandera ${ciudad.departamento}`;
+                    img.style='width:100px;height:65px;margin-left:12px;border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,0.3);vertical-align:middle;';
+                    const strong=document.getElementById('summaryCiudad');
+                    if(strong&&strong.parentNode){
+                        strong.parentNode.insertBefore(img,strong.nextSibling);
+                    }else{
+                        summaryText.appendChild(img);
+                    }
+                }else{
+                    existing.src=ciudad.bandera||'/img/banderas/default.png';
+                }
+                const modal=document.getElementById('ciudadModal');
+                if(modal)modal.style.display='none';
+            }
+
+            console.log('✅ Banderas cargadas correctamente y más grandes');
+        } catch(e) {
+            console.error('Error en el script de banderas:', e);
+        }
+    });
+})();
+</script>
+
 
 </body>
 </html>
