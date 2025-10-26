@@ -27,6 +27,10 @@ if0_39834790_transapp.sql
 .claude/settings.local.json
 TransparenciaCiudadanaApp.7z
 TransparenciaCiudadanaApp.zip
+# Ignorar todo por defecto
 *
-!data/
+
+# Excepciones (lo que SÍ quieres subir)
 !.gitignore
+!public/
+!data/
