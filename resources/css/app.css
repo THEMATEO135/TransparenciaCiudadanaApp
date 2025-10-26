@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer components {
+  /* --- Corrige alineación del grid tras filtrar --- */
+  #departamentosContainer,
+  #ciudadesContainer {
+    @apply grid gap-4 justify-items-center items-center;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  #departamentosContainer .departamento-card,
+  #ciudadesContainer .ciudad-card {
+    @apply cursor-pointer transition-transform duration-200 ease-in-out;
+  }
+
+  #departamentosContainer .departamento-card:hover,
+  #ciudadesContainer .ciudad-card:hover {
+    @apply scale-105;
+  }
+
+  .departamento-card img,
+  .ciudad-card img {
+    @apply transition-transform duration-200 ease-in-out opacity-100;
+  }
+
+  .departamento-card:hover img,
+  .ciudad-card:hover img {
+    @apply scale-105 opacity-90;
+
+  }
+  /* === FIX CLICKABLE FLAGS (BANDERAS) === */
+.departamento-card,
+.ciudad-card {
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto !important;
+    cursor: pointer;
+}
+
+.departamento-card img,
+.ciudad-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.departamento-card:hover img,
+.ciudad-card:hover img {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
+}
+
+}

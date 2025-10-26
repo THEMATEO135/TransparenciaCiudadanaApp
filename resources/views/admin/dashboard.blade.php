@@ -1,0 +1,136 @@
+@extends('admin.layouts.admin')
+
+@section('title', 'Dashboard')
+
+@section('head')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .view-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .view-toggle button {
+            margin: 0 0.25rem;
+        }
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <header class="page-header">
+        <h1 class="page-title" data-icon="📊">Dashboard</h1>
+        <div class="page-actions">
+            <a href="{{ route('admin.reportes.index') }}" class="btn btn-primary" aria-label="Ver la lista completa de reportes">
+                📑 Ver Todos los Reportes
+            </a>
+        </div>
+    </header>
+
+    <!-- Estadísticas Principales -->
+    <section class="stats-grid" aria-label="Estadísticas principales del sistema">
+        <div class="stat-card slide-in" role="article" aria-labelledby="stat-total-reportes">
+            <span class="stat-icon" aria-hidden="true">📋</span>
+            <div class="stat-label" id="stat-total-reportes">Total Reportes</div>
+            <div class="stat-value" aria-label="Total de reportes: {{ $totalReportes }}">{{ $totalReportes }}</div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.1s;" role="article" aria-labelledby="stat-servicios">
+            <span class="stat-icon" aria-hidden="true">✅</span>
+            <div class="stat-label" id="stat-servicios">Servicios Activos</div>
+            <div class="stat-value" aria-label="Servicios activos: {{ $totalServicios }}">{{ $totalServicios }}</div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.2s;" role="article" aria-labelledby="stat-usuarios">
+            <span class="stat-icon" aria-hidden="true">👥</span>
+            <div class="stat-label" id="stat-usuarios">Usuarios Registrados</div>
+            <div class="stat-value" aria-label="Usuarios registrados: {{ $totalUsuarios }}">{{ $totalUsuarios }}</div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.3s;" role="article" aria-labelledby="stat-promedio">
+            <span class="stat-icon" aria-hidden="true">📊</span>
+            <div class="stat-label" id="stat-promedio">Promedio Mensual</div>
+            <div class="stat-value" aria-label="Promedio mensual: {{ $totalReportes > 0 ? round($totalReportes / max(count($labelsMeses), 1)) : 0 }} reportes">{{ $totalReportes > 0 ? round($totalReportes / max(count($labelsMeses), 1)) : 0 }}</div>
+        </div>
+    </section>
+
+    <!-- Gráficas -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container fade-in">
+                <div class="chart-title">
+                    <span>📊</span> Reportes por Servicio
+                </div>
+                <canvas id="chartServicios"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container fade-in" style="animation-delay: 0.1s;">
+                <div class="chart-title">
+                    <span>📅</span> Tendencia Mensual
+                </div>
+                <canvas id="chartMeses"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Reportes -->
+    <div class="fade-in" style="animation-delay: 0.2s;">
+        <div class="page-header">
+            <h2 class="page-title" data-icon="🗺️" style="font-size: 1.5rem;">Mapa de Reportes</h2>
+            <div class="page-actions">
+                <a href="{{ route('admin.mapa') }}" class="btn btn-primary">
+                    🗺️ Ver Mapa Completo
+                </a>
+            </div>
+        </div>
+        <div style="position: relative;">
+            <div class="view-toggle">
+                <button class="btn btn-sm btn-primary" id="btnHeatmap">🔥 Mapa de Calor</button>
+                <button class="btn btn-sm btn-secondary" id="btnMarkers">📍 Marcadores</button>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <!-- Librerías -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+    <!-- Variables globales desde Laravel -->
+    <script>
+        window.labelsServicios = @json($labelsServicios);
+        window.valoresServicios = @json($valoresServicios);
+        window.labelsMeses = @json($labelsMeses);
+        window.valoresMeses = @json($valoresMeses);
+        window.coordenadas = @json($coordenadas);
+    </script>
+
+    <!-- Script principal -->
+    <script src="{{ asset('js/dashboard.js') }}"></script>
+@endsection
