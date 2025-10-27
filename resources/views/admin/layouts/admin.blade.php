@@ -49,6 +49,24 @@
                            aria-label="Ver mapa de calor de reportes"
                            aria-current="{{ request()->routeIs('admin.mapa') ? 'page' : 'false' }}">🗺️ Mapa</a>
                     </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link {{ request()->routeIs('admin.operador.*') ? 'active' : '' }}"
+                           href="{{ route('admin.operador.dashboard') }}"
+                           role="menuitem"
+                           aria-label="Ver herramientas del operador"
+                           aria-current="{{ request()->routeIs('admin.operador.*') ? 'page' : 'false' }}">
+                            <i class="fas fa-user-cog me-1" aria-hidden="true"></i> Operador
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link {{ request()->routeIs('admin.plantillas.*') ? 'active' : '' }}"
+                           href="{{ route('admin.plantillas.index') }}"
+                           role="menuitem"
+                           aria-label="Gestionar plantillas de comunicaci&oacute;n"
+                           aria-current="{{ request()->routeIs('admin.plantillas.*') ? 'page' : 'false' }}">
+                            <i class="fas fa-file-alt me-1" aria-hidden="true"></i> Plantillas
+                        </a>
+                    </li>
                     <li class="nav-item" role="none" style="display: flex; align-items: center; flex-direction: column; padding: 0.5rem 1rem;">
                         <div style="color: #718096; font-size: 0.875rem; margin-bottom: 0.25rem;" aria-label="Usuario actual: {{ session('admin_email', 'admin@example.com') }}">
                             <i class="fas fa-user-circle" aria-hidden="true"></i> {{ session('admin_email', 'admin@example.com') }}
@@ -78,4 +96,3 @@
     @yield('scripts')
 </body>
 </html>
-

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reporte;
+use App\Models\Servicio;
 use Illuminate\Http\Request;
 use App\Exports\ReportesExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class ReporteAdminController extends Controller
 {
@@ -80,14 +82,81 @@ class ReporteAdminController extends Controller
         ];
         $validated['estado'] = $estadosMap[$validated['estado']] ?? 'pendiente';
 
+        $estadoNuevo = $validated['estado'];
+        $estadoAnterior = $reporte->estado;
         $changes = [];
-        foreach ($validated as $key => $value) {
-            if ($reporte->$key != $value) {
-                $changes[$key] = ['old' => $reporte->$key, 'new' => $value];
+        $updatesPendientes = [];
+
+        $camposActualizables = [
+            'servicio_id' => $validated['servicio_id'],
+            'descripcion' => $validated['descripcion'],
+        ];
+
+        if (array_key_exists('notas_admin', $validated)) {
+            $camposActualizables['notas_admin'] = $validated['notas_admin'];
+        }
+
+        foreach ($camposActualizables as $campo => $valor) {
+            if ($reporte->$campo != $valor) {
+                $changes[$campo] = [
+                    'old' => $reporte->$campo,
+                    'new' => $valor,
+                ];
+                $reporte->$campo = $valor;
             }
         }
 
-        $reporte->update($validated);
+        if (!empty($changes)) {
+            $reporte->save();
+
+            if (isset($changes['servicio_id'])) {
+                $servicioAnterior = !empty($changes['servicio_id']['old'])
+                    ? Servicio::find($changes['servicio_id']['old'])
+                    : null;
+                $servicioNuevo = Servicio::find($changes['servicio_id']['new']);
+
+                $updatesPendientes[] = [
+                    'mensaje' => sprintf(
+                        "Servicio actualizado de '%s' a '%s'.",
+                        $servicioAnterior->nombre ?? 'No especificado',
+                        $servicioNuevo->nombre ?? 'No especificado'
+                    ),
+                    'tipo' => 'actualizacion',
+                ];
+            }
+
+            if (isset($changes['descripcion'])) {
+                $updatesPendientes[] = [
+                    'mensaje' => "La descripcion del reporte fue actualizada: \"" . Str::limit($changes['descripcion']['new'], 180) . "\"",
+                    'tipo' => 'actualizacion',
+                ];
+            }
+
+            if (isset($changes['notas_admin'])) {
+                $updatesPendientes[] = [
+                    'mensaje' => 'Notas internas actualizadas por el equipo.',
+                    'tipo' => 'sistema',
+                    'visible' => false,
+                ];
+            }
+        }
+
+        if ($estadoNuevo !== $estadoAnterior) {
+            $changes['estado'] = [
+                'old' => $estadoAnterior,
+                'new' => $estadoNuevo,
+            ];
+            $reporte->cambiarEstado($estadoNuevo);
+        }
+
+        foreach ($updatesPendientes as $update) {
+            $reporte->registrarUpdate(
+                $update['mensaje'],
+                $update['tipo'] ?? 'actualizacion',
+                $update['visible'] ?? true,
+                $update['extra'] ?? []
+            );
+        }
 
         // Invalidar cache de estadísticas del dashboard
         \Cache::forget('dashboard_stats');

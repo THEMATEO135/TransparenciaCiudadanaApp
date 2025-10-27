@@ -82,7 +82,7 @@
                     <p>Por favor, selecciona un servicio arriba para habilitar el formulario</p>
                 </div>
 
-                <form id="reportForm" method="POST" action="{{ route('reportes.store') }}">
+                <form id="reportForm" method="POST" action="{{ route('reportes.store') }}" enctype="multipart/form-data">
                     @csrf {{-- ¡Directiva de Laravel para el token CSRF! --}}
                     
                     <div class="form-group has-icon">
@@ -144,18 +144,37 @@
                         <i class="fas fa-map-marker-alt input-icon"></i>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="localidad" class="form-label">Localidad de Bogotá</label>
-                            <select class="form-select" id="localidad" name="localidad" disabled>
-                                <option value="">Selecciona una localidad</option>
-                            </select>
+                    <div class="form-group has-icon">
+                        <label for="barrio" class="form-label">
+                            <i class="fas fa-map-signs" style="margin-right: 0.5rem; color: #ff6600;"></i>
+                            Barrio (opcional)
+                        </label>
+                        <input type="text" class="form-control" id="barrio" name="barrio"
+                                placeholder="Ingresa tu barrio" disabled>
+                        <i class="fas fa-map-signs input-icon"></i>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="form-group">
+                        <label for="imagenes" class="form-label">
+                            <i class="fas fa-camera" style="margin-right: 0.5rem; color: #ff6600;"></i>
+                            Fotografías de la evidencia (opcional)
+                        </label>
+                        <p style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;">
+                            <i class="fas fa-info-circle"></i> Puedes subir hasta 5 imágenes (máx. 5MB cada una). Formatos: JPG, PNG
+                        </p>
+
+                        <div class="image-upload-container" style="border: 2px dashed #ddd; border-radius: 12px; padding: 20px; text-align: center; background: #f9f9f9; cursor: pointer;" onclick="document.getElementById('imagenes').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #ff6600; margin-bottom: 10px; display: block;"></i>
+                            <p style="margin: 0; color: #666;">Haz clic aquí o arrastra las imágenes</p>
+                            <input type="file" id="imagenes" name="imagenes[]" multiple accept="image/jpeg,image/png,image/jpg" style="display: none;" disabled onchange="handleImageSelect(event)">
                         </div>
-                        <div class="form-group">
-                            <label for="barrio" class="form-label">Barrio</label>
-                            <select class="form-select" id="barrio" name="barrio" disabled>
-                                <option value="">Selecciona un barrio</option>
-                            </select>
+
+                        <!-- Preview Container -->
+                        <div id="imagePreviewContainer" style="display: none; margin-top: 15px;">
+                            <div id="imagePreviews" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+                                <!-- Image previews will be added here -->
+                            </div>
                         </div>
                     </div>
 
@@ -294,6 +313,117 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script src="{{ asset('js/reporte.js') }}"></script>
+
+    <script>
+    // Image Upload Handling
+    let selectedFiles = [];
+    const MAX_FILES = 5;
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+    function handleImageSelect(event) {
+        const files = Array.from(event.target.files);
+
+        // Validate number of files
+        if (selectedFiles.length + files.length > MAX_FILES) {
+            alert(`Solo puedes subir un máximo de ${MAX_FILES} imágenes`);
+            return;
+        }
+
+        // Validate each file
+        for (const file of files) {
+            if (file.size > MAX_SIZE) {
+                alert(`La imagen "${file.name}" excede el tamaño máximo de 5MB`);
+                continue;
+            }
+
+            if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                alert(`El archivo "${file.name}" no es un formato válido. Solo se permiten JPG y PNG`);
+                continue;
+            }
+
+            selectedFiles.push(file);
+        }
+
+        updateImagePreviews();
+    }
+
+    function updateImagePreviews() {
+        const container = document.getElementById('imagePreviewContainer');
+        const previews = document.getElementById('imagePreviews');
+
+        if (selectedFiles.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.style.display = 'block';
+        previews.innerHTML = '';
+
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewItem = document.createElement('div');
+                previewItem.style = 'position: relative; border-radius: 8px; overflow: hidden; border: 2px solid #ddd;';
+                previewItem.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview ${index + 1}"
+                         style="width: 100%; height: 120px; object-fit: cover; display: block;">
+                    <button type="button" onclick="removeImage(${index})"
+                            style="position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                previews.appendChild(previewItem);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Update file input
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        document.getElementById('imagenes').files = dataTransfer.files;
+    }
+
+    function removeImage(index) {
+        selectedFiles.splice(index, 1);
+        updateImagePreviews();
+    }
+
+    // Drag and drop functionality
+    const uploadContainer = document.querySelector('.image-upload-container');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadContainer.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadContainer.addEventListener(eventName, function() {
+            this.style.borderColor = '#ff6600';
+            this.style.background = '#fff5e6';
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadContainer.addEventListener(eventName, function() {
+            this.style.borderColor = '#ddd';
+            this.style.background = '#f9f9f9';
+        });
+    });
+
+    uploadContainer.addEventListener('drop', function(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        document.getElementById('imagenes').files = files;
+        handleImageSelect({ target: { files: files } });
+    });
+    </script>
+
+    <script</script>
     <script>
 (function() {
     document.addEventListener('DOMContentLoaded', async () => {

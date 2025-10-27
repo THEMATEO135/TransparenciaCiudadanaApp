@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if [ ! -d \"resources/views/admin/operador\" ])",
+      "Bash(then mkdir -p \"resources/views/admin/operador\")",
+      "Bash(fi)",
+      "Bash(if [ ! -d \"resources/views/emails\" ])",
+      "Bash(then mkdir -p \"resources/views/emails\")",
+      "Bash(if [ ! -d \"resources/views/admin/plantillas\" ])",
+      "Bash(then mkdir -p \"resources/views/admin/plantillas\")",
+      "Bash(php artisan migrate:*)",
+      "Bash(php artisan db:seed:*)",
+      "Bash(php artisan:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

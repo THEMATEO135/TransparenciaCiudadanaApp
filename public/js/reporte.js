@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn: document.getElementById('submitBtn'),
         locationStatus: document.getElementById('locationStatus'),
         servicePrompt: document.getElementById('servicePrompt'),
-        localidadSelect: document.getElementById('localidad'),
-        barrioSelect: document.getElementById('barrio'),
         latInput: document.getElementById('latitude'),
         lngInput: document.getElementById('longitude'),
         servicioInput: document.getElementById('servicio_id'),
@@ -35,8 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let ciudadSeleccionada = null;
     let map = null;
     let marker = null;
-
-    const BARRIOS_URL = 'https://serviciosgis.catastrobogota.gov.co/arcgis/rest/services/ordenamientoterritorial/entidadterritorial/MapServer/0/query';
 
     // =====================================
     // FUNCIONES DE CONTROL DE FORMULARIO
@@ -481,135 +477,8 @@ function renderDepartamentos(departamentos) {
         }
     };
 
-    // =====================================
-    // CARGAR LOCALIDADES Y BARRIOS
-    // =====================================
-    async function cargarLocalidades() {
-        try {
-            const queryParams = new URLSearchParams({
-                where: '1=1',
-                outFields: 'LOCALIDAD',
-                returnDistinctValues: 'true',
-                orderByFields: 'LOCALIDAD',
-                f: 'json',
-                outSR: '4326'
-            });
-
-            const res = await fetch(`${BARRIOS_URL}?${queryParams}`);
-            if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
-
-            const json = await res.json();
-            const selLoc = DOM.localidadSelect;
-            if (!selLoc) return;
-
-            selLoc.innerHTML = '<option value="">Selecciona una localidad</option>';
-
-            if (json && json.features && json.features.length > 0) {
-                const localidades = json.features
-                    .map(f => f.attributes?.LOCALIDAD)
-                    .filter(loc => loc && loc.trim() !== '')
-                    .sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
-
-                const localidadesUnicas = [...new Set(localidades)];
-
-                localidadesUnicas.forEach(loc => {
-                    const opt = document.createElement('option');
-                    opt.value = loc;
-                    opt.textContent = loc;
-                    selLoc.appendChild(opt);
-                });
-            } else {
-                const localidadesPredefinidas = [
-                    "USAQUÉN", "CHAPINERO", "SANTA FE", "SAN CRISTÓBAL",
-                    "USME", "TUNJUELITO", "BOSA", "KENNEDY", "FONTIBÓN",
-                    "ENGATIVÁ", "SUBA", "BARRIOS UNIDOS", "TEUSAQUILLO",
-                    "LOS MÁRTIRES", "ANTONIO NARIÑO", "PUENTE ARANDA",
-                    "LA CANDELARIA", "RAFAEL URIBE URIBE", "CIUDAD BOLÍVAR",
-                    "SUMAPAZ"
-                ];
-
-                localidadesPredefinidas.forEach(loc => {
-                    const opt = document.createElement('option');
-                    opt.value = loc;
-                    opt.textContent = loc;
-                    selLoc.appendChild(opt);
-                });
-            }
-        } catch (error) {
-            console.error('Error cargando localidades:', error);
-        }
-    }
-
-    async function cargarBarriosPorLocalidad(localidad) {
-        try {
-            const selBar = DOM.barrioSelect;
-            if (!selBar) return;
-
-            selBar.disabled = true;
-            selBar.innerHTML = '<option value="">Cargando barrios...</option>';
-
-            const whereClause = encodeURIComponent(`LOCALIDAD = '${localidad.replace(/'/g, "''")}'`);
-            const queryParams = new URLSearchParams({
-                where: whereClause,
-                outFields: 'BARRIOCOMU',
-                returnDistinctValues: 'true',
-                orderByFields: 'BARRIOCOMU',
-                f: 'json',
-                outSR: '4326'
-            });
-
-            const res = await fetch(`${BARRIOS_URL}?${queryParams}`);
-            if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
-
-            const json = await res.json();
-            selBar.innerHTML = '<option value="">Selecciona un barrio</option>';
-
-            if (json && json.features && json.features.length > 0) {
-                const barrios = json.features
-                    .map(f => f.attributes?.BARRIOCOMU)
-                    .filter(barrio => barrio && barrio.trim() !== '')
-                    .sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
-
-                const barriosUnicos = [...new Set(barrios)];
-
-                barriosUnicos.forEach(barrio => {
-                    const opt = document.createElement('option');
-                    opt.value = barrio;
-                    opt.textContent = barrio;
-                    selBar.appendChild(opt);
-                });
-            } else {
-                selBar.innerHTML = '<option value="">No se encontraron barrios</option>';
-            }
-
-            selBar.disabled = false;
-        } catch (error) {
-            console.error('Error cargando barrios:', error);
-            const selBar = DOM.barrioSelect;
-            if (selBar) {
-                selBar.innerHTML = '<option value="">Error cargando barrios</option>';
-                selBar.disabled = false;
-            }
-        }
-    }
-
-    // Listeners
-    cargarLocalidades();
+    // Cargar ciudades al iniciar
     cargarCiudades();
-
-    if (DOM.localidadSelect) {
-        DOM.localidadSelect.addEventListener('change', (e) => {
-            const loc = e.target.value;
-            if (loc) {
-                cargarBarriosPorLocalidad(loc);
-            } else {
-                if (DOM.barrioSelect) {
-                    DOM.barrioSelect.innerHTML = '<option value="">Selecciona un barrio</option>';
-                    DOM.barrioSelect.disabled = true;
-                }
-            }
-        });
-    }
 
     // Close and Back buttons
     const closeFromDepartamento = document.getElementById('closeFromDepartamento');

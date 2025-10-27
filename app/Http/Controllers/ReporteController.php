@@ -35,11 +35,36 @@ class ReporteController extends Controller
                 'barrio' => 'nullable|string|max:100',
                 'latitude' => 'nullable|numeric|between:-90,90',
                 'longitude' => 'nullable|numeric|between:-180,180',
+                'imagenes.*' => 'nullable|image|max:5120', // 5MB por imagen
             ]);
 
+            // Upload de imágenes si existen
+            $imagenesUrls = [];
+            if ($request->hasFile('imagenes')) {
+                $imageUploadService = app(\App\Services\ImageUploadService::class);
+                $imagenesUrls = $imageUploadService->uploadReporteImages(
+                    $request->file('imagenes'),
+                    0 // Temporal, se actualizará después
+                );
+            }
+
             // Crear el reporte
-            $reporte = Reporte::create($validated);
+            $reporte = Reporte::create(array_merge($validated, [
+                'imagenes' => $imagenesUrls
+            ]));
             Log::info('Reporte creado exitosamente', ['id' => $reporte->id]);
+
+            // Calcular prioridad automáticamente
+            $reporte->calcularPrioridad(false);
+
+            // Detectar duplicados en segundo plano
+            \App\Jobs\DetectDuplicatesJob::dispatch($reporte)->delay(now()->addSeconds(5));
+
+            // Crear update inicial
+            $reporte->agregarComentario(
+                'Reporte recibido. Estamos evaluando tu caso.',
+                true
+            );
 
             // Crear notificación para admins
             $admins = \App\Models\User::where('role', 'admin')->where('is_active', true)->get();
@@ -234,5 +259,126 @@ class ReporteController extends Controller
             ->get();
 
         return view('reportes.consultar', compact('reportes'));
+    }
+
+    /**
+     * Ver timeline de un reporte específico
+     */
+    public function timeline($id)
+    {
+        $reporte = Reporte::with([
+            'servicio',
+            'ciudad',
+            'proveedor',
+            'operador',
+            'updates' => function($q) {
+                $q->visibleCiudadano()->orderBy('created_at', 'desc');
+            },
+            'duplicados',
+            'padre'
+        ])->findOrFail($id);
+
+        return view('reportes.timeline', compact('reporte'));
+    }
+
+    /**
+     * Agregar comentario ciudadano (API)
+     */
+    public function agregarComentario(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'contenido' => 'required|string|max:1000',
+            'correo' => 'required|email', // Verificar que sea el dueño
+        ]);
+
+        $reporte = Reporte::findOrFail($id);
+
+        // Verificar que el correo coincida
+        if ($reporte->correo !== $validated['correo']) {
+            return response()->json([
+                'ok' => false,
+                'error' => 'No autorizado'
+            ], 403);
+        }
+
+        $update = \App\Models\ReporteUpdate::create([
+            'reporte_id' => $reporte->id,
+            'user_id' => null, // Comentario del ciudadano
+            'tipo' => 'comentario',
+            'contenido' => $validated['contenido'],
+            'visible_ciudadano' => true,
+        ]);
+
+        // Notificar a admins
+        $admins = \App\Models\User::where('role', 'admin')->where('is_active', true)->get();
+        foreach ($admins as $admin) {
+            \App\Models\Notification::createFor(
+                $admin->id,
+                'nuevo_comentario',
+                'Nuevo comentario en reporte #' . $reporte->id,
+                $validated['contenido'],
+                route('admin.reportes.edit', $reporte->id)
+            );
+        }
+
+        return response()->json([
+            'ok' => true,
+            'update' => $update
+        ]);
+    }
+
+    /**
+     * Buscar duplicados de un reporte (API)
+     */
+    public function buscarDuplicados(Request $request)
+    {
+        $validated = $request->validate([
+            'servicio_id' => 'required|integer',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'barrio' => 'nullable|string',
+        ]);
+
+        $duplicateService = app(\App\Services\DuplicateDetectionService::class);
+
+        // Crear reporte temporal para búsqueda
+        $reporteTemp = new Reporte($validated);
+        $sugerencia = $duplicateService->getSugerenciaDuplicado($reporteTemp);
+
+        return response()->json([
+            'ok' => true,
+            'tiene_duplicado' => !is_null($sugerencia),
+            'sugerencia' => $sugerencia
+        ]);
+    }
+
+    /**
+     * Unirse a un reporte existente como duplicado
+     */
+    public function unirDuplicado(Request $request)
+    {
+        $validated = $request->validate([
+            'reporte_nuevo_id' => 'required|integer|exists:reportes,id',
+            'reporte_padre_id' => 'required|integer|exists:reportes,id',
+            'correo' => 'required|email',
+        ]);
+
+        $reporteNuevo = Reporte::findOrFail($validated['reporte_nuevo_id']);
+
+        // Verificar que el correo coincida
+        if ($reporteNuevo->correo !== $validated['correo']) {
+            return response()->json([
+                'ok' => false,
+                'error' => 'No autorizado'
+            ], 403);
+        }
+
+        $duplicateService = app(\App\Services\DuplicateDetectionService::class);
+        $result = $duplicateService->unirDuplicado($reporteNuevo, $validated['reporte_padre_id']);
+
+        return response()->json([
+            'ok' => $result,
+            'message' => $result ? 'Reporte unido exitosamente' : 'Error al unir reporte'
+        ]);
     }
 }

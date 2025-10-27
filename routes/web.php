@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\DashboardStatsController;
 use App\Http\Controllers\HistorialReportesController;
 use App\Http\Controllers\Api\ProveedorController as ApiProveedorController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\OperadorController;
+use App\Http\Controllers\PlantillaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +28,7 @@ Route::prefix('api')->name('api.')->group(function () {
 
 // Rutas públicas (ciudadanos)
 Route::get('/', [ReporteController::class, 'index'])->name('home');
+Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 Route::get('/reportes/create', [ReporteController::class, 'create'])->name('reportes.create');
 Route::post('/reportes', [ReporteController::class, 'store'])->name('reportes.store');
 Route::get('/consulta', [ReporteController::class, 'consulta'])->name('reportes.consulta');
@@ -34,6 +38,16 @@ Route::get('/mis-reportes', [HistorialReportesController::class, 'index'])->name
 Route::post('/mis-reportes/enviar-otp', [HistorialReportesController::class, 'enviarOtp'])->name('reportes.historial.enviarOtp');
 Route::get('/mis-reportes/verificar', [HistorialReportesController::class, 'mostrarVerificacion'])->name('reportes.historial.verificar');
 Route::post('/mis-reportes/verificar', [HistorialReportesController::class, 'verificarOtp'])->name('reportes.historial.verificarOtp');
+
+// Rutas de Timeline y Feedback (públicas)
+Route::get('/reportes/{id}/timeline', [ReporteController::class, 'timeline'])->name('reportes.timeline');
+Route::get('/feedback/{token}', [FeedbackController::class, 'mostrar'])->name('feedback.mostrar');
+Route::post('/feedback/{token}', [FeedbackController::class, 'responder'])->name('feedback.responder');
+
+// APIs públicas de reportes
+Route::post('/reportes/{id}/comentario', [ReporteController::class, 'agregarComentario'])->name('reportes.comentario');
+Route::post('/reportes/buscar-duplicados', [ReporteController::class, 'buscarDuplicados'])->name('reportes.buscarDuplicados');
+Route::post('/reportes/unir-duplicado', [ReporteController::class, 'unirDuplicado'])->name('reportes.unirDuplicado');
 
 // Rutas de autenticación admin
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -84,7 +98,23 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
     Route::view('/ciudades', 'ciudades.index')->name('ciudades.index');
 
 
-    
+
+    // Dashboard de Operador
+    Route::prefix('operador')->name('operador.')->group(function () {
+        Route::get('/dashboard', [OperadorController::class, 'dashboard'])->name('dashboard');
+        Route::get('/mis-reportes', [OperadorController::class, 'misReportes'])->name('misReportes');
+        Route::post('/reportes/{id}/aceptar', [OperadorController::class, 'aceptarAsignacion'])->name('aceptar');
+        Route::post('/reportes/{id}/requiere-informacion', [OperadorController::class, 'requiereInformacion'])->name('requiereInformacion');
+    });
+
+    // Gestión de Plantillas
+    Route::resource('plantillas', PlantillaController::class);
+    Route::get('/plantillas/{id}/preview', [PlantillaController::class, 'preview'])->name('plantillas.preview');
+    Route::post('/plantillas/enviar-email', [PlantillaController::class, 'enviarEmail'])->name('plantillas.enviarEmail');
+
+    // Feedback (Admin)
+    Route::get('/feedback/estadisticas', [FeedbackController::class, 'estadisticas'])->name('feedback.estadisticas');
+
     // API para actualizaciones en tiempo real
     Route::get('/dashboard/stats', [DashboardStatsController::class, 'stats'])->name('dashboard.stats');
 });
