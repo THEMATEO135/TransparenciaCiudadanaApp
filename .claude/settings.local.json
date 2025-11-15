@@ -10,7 +10,11 @@
       "Bash(then mkdir -p \"resources/views/admin/plantillas\")",
       "Bash(php artisan migrate:*)",
       "Bash(php artisan db:seed:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(pandoc:*)",
+      "Bash(python -c:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []
