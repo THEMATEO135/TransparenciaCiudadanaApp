@@ -50,6 +50,15 @@
                            aria-current="{{ request()->routeIs('admin.mapa') ? 'page' : 'false' }}">🗺️ Mapa</a>
                     </li>
                     <li class="nav-item" role="none">
+                        <a class="nav-link {{ request()->is('admin/powerbi') ? 'active' : '' }}"
+                           href="{{ url('admin/powerbi') }}"
+                           role="menuitem"
+                           aria-label="Ver reportes de Power BI"
+                           aria-current="{{ request()->is('admin/powerbi') ? 'page' : 'false' }}">
+                            <i class="fas fa-chart-bar me-1" aria-hidden="true"></i> Power BI
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
                         <a class="nav-link {{ request()->routeIs('admin.operador.*') ? 'active' : '' }}"
                            href="{{ route('admin.operador.dashboard') }}"
                            role="menuitem"
@@ -65,6 +74,24 @@
                            aria-label="Gestionar plantillas de comunicaci&oacute;n"
                            aria-current="{{ request()->routeIs('admin.plantillas.*') ? 'page' : 'false' }}">
                             <i class="fas fa-file-alt me-1" aria-hidden="true"></i> Plantillas
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link {{ request()->routeIs('admin.feedback.*') ? 'active' : '' }}"
+                           href="{{ route('admin.feedback.estadisticas') }}"
+                           role="menuitem"
+                           aria-label="Ver estadísticas de feedback"
+                           aria-current="{{ request()->routeIs('admin.feedback.*') ? 'page' : 'false' }}">
+                            <i class="fas fa-chart-line me-1" aria-hidden="true"></i> Feedback
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link {{ request()->routeIs('admin.ciudades.*') ? 'active' : '' }}"
+                           href="{{ route('admin.ciudades.index') }}"
+                           role="menuitem"
+                           aria-label="Gestionar ciudades"
+                           aria-current="{{ request()->routeIs('admin.ciudades.*') ? 'page' : 'false' }}">
+                            <i class="fas fa-map-marker-alt me-1" aria-hidden="true"></i> Ciudades
                         </a>
                     </li>
                     <li class="nav-item" role="none" style="display: flex; align-items: center; flex-direction: column; padding: 0.5rem 1rem;">

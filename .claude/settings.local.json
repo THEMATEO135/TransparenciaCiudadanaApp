@@ -14,7 +14,10 @@
       "Bash(pandoc:*)",
       "Bash(python -c:*)",
       "Bash(pip install:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(mkdir:*)",
+      "Bash(C:xamppphpphp.exe artisan serve)",
+      "Bash(setx PATH \"%PATH%;C:\\xampp\\php\")"
     ],
     "deny": [],
     "ask": []
