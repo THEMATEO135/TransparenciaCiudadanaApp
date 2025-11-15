@@ -17,9 +17,9 @@ class AdminDashboardController extends Controller
                 'totalReportes' => Reporte::count(),
                 'totalServicios' => Servicio::count(),
                 'totalUsuarios' => Reporte::distinct('nombres')->count('nombres'),
-                'pendientes' => Reporte::where('estado', 'pendiente')->count(),
-                'enProceso' => Reporte::where('estado', 'en_proceso')->count(),
-                'resueltos' => Reporte::where('estado', 'resuelto')->count(),
+                'pendientes' => Reporte::porEstado('pendiente')->count(),
+                'enProceso' => Reporte::porEstado('en_proceso')->count(),
+                'resueltos' => Reporte::porEstado('resuelto')->count(),
             ];
         });
 

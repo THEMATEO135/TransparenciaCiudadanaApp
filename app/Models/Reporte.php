@@ -25,7 +25,7 @@ class Reporte extends Model
         'latitude',
         'longitude',
         'notas_admin',
-        'estado',
+        'estado_id',
         'prioridad',
         'assigned_to',
         'assigned_at',
@@ -42,6 +42,7 @@ class Reporte extends Model
         'servicio_id' => 'integer',
         'ciudad_id' => 'integer',
         'proveedor_id' => 'integer',
+        'estado_id' => 'integer',
         'assigned_to' => 'integer',
         'parent_id' => 'integer',
         'duplicados_count' => 'integer',
@@ -57,6 +58,12 @@ class Reporte extends Model
     public function servicio()
     {
         return $this->belongsTo(Servicio::class);
+    }
+
+    // Relación con estado
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'estado_id');
     }
 
     // Relación con ciudad
@@ -106,7 +113,18 @@ class Reporte extends Model
      */
     public function scopePorEstado($query, $estado)
     {
-        return $query->where('estado', $estado);
+        // Acepta tanto ID como nombre de estado
+        if (is_numeric($estado)) {
+            return $query->where('estado_id', $estado);
+        }
+
+        // Si es string, buscar por nombre
+        $estadoModel = Estado::where('nombre', $estado)->first();
+        if ($estadoModel) {
+            return $query->where('estado_id', $estadoModel->id);
+        }
+
+        return $query;
     }
 
     public function scopePorPrioridad($query, $prioridad)
@@ -136,9 +154,12 @@ class Reporte extends Model
 
     public function scopeVencidos($query)
     {
+        // Obtener IDs de estados finales (resuelto, rechazado, cerrado)
+        $estadosFinales = Estado::where('es_estado_final', true)->pluck('id')->toArray();
+
         return $query->whereNotNull('deadline')
                     ->where('deadline', '<', now())
-                    ->whereNotIn('estado', ['resuelto', 'cerrado']);
+                    ->whereNotIn('estado_id', $estadosFinales);
     }
 
     public function scopePorZona($query, $lat, $lng, $radiusKm = 0.5)
@@ -174,9 +195,12 @@ class Reporte extends Model
 
     public function estaVencido()
     {
-        return $this->deadline &&
-               $this->deadline < now() &&
-               !in_array($this->estado, ['resuelto', 'cerrado']);
+        if (!$this->deadline || $this->deadline >= now()) {
+            return false;
+        }
+
+        // Verificar si está en un estado final
+        return $this->estado && !$this->estado->es_estado_final;
     }
 
     public function estaAsignado()
@@ -316,22 +340,34 @@ class Reporte extends Model
     public function cambiarEstado($nuevoEstado, $comentario = null)
     {
         $estadoAnterior = $this->estado;
-        $this->estado = $nuevoEstado;
+
+        // Aceptar tanto ID como nombre de estado
+        if (is_numeric($nuevoEstado)) {
+            $estadoNuevo = Estado::find($nuevoEstado);
+        } else {
+            $estadoNuevo = Estado::where('nombre', $nuevoEstado)->first();
+        }
+
+        if (!$estadoNuevo) {
+            throw new \Exception("Estado '{$nuevoEstado}' no encontrado");
+        }
+
+        $this->estado_id = $estadoNuevo->id;
         $this->save();
 
         // Registrar actualizacion en el timeline
         $this->registrarUpdate(
-            $comentario ?? "Estado cambiado de '{$estadoAnterior}' a '{$nuevoEstado}'",
+            $comentario ?? "Estado cambiado de '{$estadoAnterior->etiqueta}' a '{$estadoNuevo->etiqueta}'",
             'cambio_estado',
             true,
             [
-                'estado_anterior' => $estadoAnterior,
-                'estado_nuevo' => $nuevoEstado,
+                'estado_anterior' => $estadoAnterior?->nombre,
+                'estado_nuevo' => $estadoNuevo->nombre,
             ]
         );
 
         // Si se marca como resuelto, crear feedback
-        if ($nuevoEstado === 'resuelto' && !$this->feedback) {
+        if ($estadoNuevo->nombre === 'resuelto' && !$this->feedback) {
             $token = ReporteFeedback::generarToken();
             ReporteFeedback::create([
                 'reporte_id' => $this->id,
@@ -368,14 +404,8 @@ class Reporte extends Model
 
     public function getColorEstadoAttribute()
     {
-        return match($this->estado) {
-            'resuelto', 'cerrado' => 'success',
-            'en_proceso', 'asignado' => 'primary',
-            'en_revision' => 'info',
-            'requiere_informacion' => 'warning',
-            'reabierto' => 'danger',
-            default => 'secondary'
-        };
+        // Ahora retornamos el color directamente del estado normalizado
+        return $this->estado ? $this->estado->color : '#6c757d';
     }
 
     public function registrarUpdate(string $mensaje, string $tipo = 'sistema', bool $visibleCiudadano = true, array $extra = []): ReporteUpdate

@@ -50,15 +50,6 @@
                            aria-current="{{ request()->routeIs('admin.mapa') ? 'page' : 'false' }}">🗺️ Mapa</a>
                     </li>
                     <li class="nav-item" role="none">
-                        <a class="nav-link {{ request()->is('admin/powerbi') ? 'active' : '' }}"
-                           href="{{ url('admin/powerbi') }}"
-                           role="menuitem"
-                           aria-label="Ver reportes de Power BI"
-                           aria-current="{{ request()->is('admin/powerbi') ? 'page' : 'false' }}">
-                            <i class="fas fa-chart-bar me-1" aria-hidden="true"></i> Power BI
-                        </a>
-                    </li>
-                    <li class="nav-item" role="none">
                         <a class="nav-link {{ request()->routeIs('admin.operador.*') ? 'active' : '' }}"
                            href="{{ route('admin.operador.dashboard') }}"
                            role="menuitem"

@@ -115,7 +115,7 @@ class HistorialReportesController extends Controller
 
         // Obtener reportes del usuario
         $reportes = Reporte::where('correo', $email)
-            ->with(['servicio', 'ciudad', 'proveedor'])
+            ->with(['servicio', 'ciudad', 'proveedor', 'estado'])
             ->orderBy('created_at', 'desc')
             ->get();
 

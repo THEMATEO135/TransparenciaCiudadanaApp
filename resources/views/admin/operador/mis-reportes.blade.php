@@ -20,11 +20,11 @@
                         <label class="form-label">Estado</label>
                         <select name="estado" class="form-select">
                             <option value="">Todos</option>
-                            <option value="asignado" {{ request('estado') == 'asignado' ? 'selected' : '' }}>Asignado</option>
-                            <option value="en_proceso" {{ request('estado') == 'en_proceso' ? 'selected' : '' }}>En Proceso</option>
-                            <option value="en_revision" {{ request('estado') == 'en_revision' ? 'selected' : '' }}>En Revisión</option>
-                            <option value="resuelto" {{ request('estado') == 'resuelto' ? 'selected' : '' }}>Resuelto</option>
-                            <option value="requiere_informacion" {{ request('estado') == 'requiere_informacion' ? 'selected' : '' }}>Requiere Información</option>
+                            @foreach($estados as $estado)
+                                <option value="{{ $estado->nombre }}" {{ request('estado') == $estado->nombre ? 'selected' : '' }}>
+                                    {{ $estado->icono }} {{ $estado->etiqueta }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -101,9 +101,13 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge bg-{{ $reporte->color_estado }}">
-                                    {{ ucfirst(str_replace('_', ' ', $reporte->estado)) }}
-                                </span>
+                                @if($reporte->estado)
+                                    <span class="badge" style="background-color: {{ $reporte->estado->color }}; color: white;">
+                                        {{ $reporte->estado->icono }} {{ $reporte->estado->etiqueta }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">Sin estado</span>
+                                @endif
                             </td>
                             <td>
                                 <small>{{ $reporte->assigned_at ? $reporte->assigned_at->format('d/m/Y H:i') : 'N/A' }}</small>
@@ -135,14 +139,14 @@
                                     </a>
                                 </div>
 
-                                @if($reporte->estado === 'asignado')
+                                @if($reporte->estado && $reporte->estado->nombre === 'asignado')
                                 <button class="btn btn-success btn-sm mt-1 w-100"
                                         onclick="aceptarReporte({{ $reporte->id }})">
                                     <i class="fas fa-check"></i> Aceptar
                                 </button>
                                 @endif
 
-                                @if(in_array($reporte->estado, ['en_proceso', 'en_revision']))
+                                @if($reporte->estado && in_array($reporte->estado->nombre, ['en_proceso', 'en_revision']))
                                 <button class="btn btn-warning btn-sm mt-1 w-100"
                                         onclick="requiereInformacion({{ $reporte->id }})">
                                     <i class="fas fa-question-circle"></i> Requiere Info

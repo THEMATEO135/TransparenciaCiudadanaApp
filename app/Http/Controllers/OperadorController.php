@@ -22,22 +22,21 @@ class OperadorController extends Controller
 
         // Reportes asignados al operador actual
         $reportesAsignados = Reporte::asignadoA($userId)
-            ->with(['servicio', 'ciudad'])
+            ->with(['servicio', 'ciudad', 'estado'])
             ->get();
 
         $stats = [
             'total_asignados' => $reportesAsignados->count(),
-            'pendientes' => $reportesAsignados->where('estado', 'asignado')->count(),
-            'en_proceso' => $reportesAsignados->whereIn('estado', ['en_proceso', 'en_revision'])->count(),
+            'pendientes' => $reportesAsignados->filter(fn($r) => $r->estado && $r->estado->nombre === 'asignado')->count(),
+            'en_proceso' => $reportesAsignados->filter(fn($r) => $r->estado && in_array($r->estado->nombre, ['en_proceso', 'en_revision']))->count(),
             'resueltos_hoy' => $reportesAsignados
-                ->where('estado', 'resuelto')
-                ->filter(fn($r) => $r->updated_at->isToday())
+                ->filter(fn($r) => $r->estado && $r->estado->nombre === 'resuelto' && $r->updated_at->isToday())
                 ->count(),
             'vencidos' => $reportesAsignados->filter(fn($r) => $r->estaVencido())->count(),
         ];
 
         // Cálculos de desempeño
-        $reportesResueltos = $reportesAsignados->where('estado', 'resuelto');
+        $reportesResueltos = $reportesAsignados->filter(fn($r) => $r->estado && $r->estado->nombre === 'resuelto');
 
         $tiempoPromedio = 0;
         if ($reportesResueltos->count() > 0) {
@@ -85,11 +84,11 @@ class OperadorController extends Controller
         $userId = auth()->id();
 
         $query = Reporte::asignadoA($userId)
-            ->with(['servicio', 'ciudad', 'proveedor']);
+            ->with(['servicio', 'ciudad', 'proveedor', 'estado']);
 
         // Filtros
         if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+            $query->porEstado($request->estado);
         }
 
         if ($request->filled('prioridad')) {
@@ -100,7 +99,9 @@ class OperadorController extends Controller
                           ->orderBy('created_at', 'desc')
                           ->paginate(20);
 
-        return view('admin.operador.mis-reportes', compact('reportes'));
+        $estados = \App\Models\Estado::activos()->ordenados()->get();
+
+        return view('admin.operador.mis-reportes', compact('reportes', 'estados'));
     }
 
     /**

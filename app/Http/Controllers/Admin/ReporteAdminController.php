@@ -32,7 +32,7 @@ class ReporteAdminController extends Controller
 
         // Filtro por estado
         if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+            $query->porEstado($request->estado);
         }
 
         // Filtro por ubicación (búsqueda en dirección)
@@ -52,38 +52,36 @@ class ReporteAdminController extends Controller
 
         $reportes = $query->orderBy('created_at', 'DESC')->paginate(15);
         $servicios = \App\Models\Servicio::all();
+        $estados = \App\Models\Estado::activos()->ordenados()->get();
 
-        return view('admin.reportes.index', compact('reportes', 'servicios'));
+        // Obtener contadores totales (no solo de la página actual)
+        $totalPendientes = \App\Models\Reporte::porEstado('pendiente')->count();
+        $totalResueltos = \App\Models\Reporte::porEstado('resuelto')->count();
+        $totalEnProceso = \App\Models\Reporte::porEstado('en_proceso')->count();
+
+        return view('admin.reportes.index', compact('reportes', 'servicios', 'estados', 'totalPendientes', 'totalResueltos', 'totalEnProceso'));
     }
 
     // Mostrar formulario de edición
     public function edit(Reporte $reporte)
     {
-        $servicios = \App\Models\Servicio::all(); // Para el select
-        return view('admin.reportes.edit', compact('reporte', 'servicios'));
+        $servicios = \App\Models\Servicio::all();
+        $estados = \App\Models\Estado::activos()->ordenados()->get();
+        return view('admin.reportes.edit', compact('reporte', 'servicios', 'estados'));
     }
 
     // Actualizar reporte
     public function update(Request $request, Reporte $reporte)
     {
         $validated = $request->validate([
-            'estado' => 'required|string|in:Pendiente,En Proceso,Resuelto,Rechazado',
+            'estado_id' => 'required|integer|exists:estados,id',
             'servicio_id' => 'required|integer|exists:servicios,id',
             'descripcion' => 'required|string',
             'notas_admin' => 'nullable|string',
         ]);
 
-        // Convertir estado al formato de la base de datos
-        $estadosMap = [
-            'Pendiente' => 'pendiente',
-            'En Proceso' => 'en_proceso',
-            'Resuelto' => 'resuelto',
-            'Rechazado' => 'resuelto' // No existe rechazado en BD, usar resuelto
-        ];
-        $validated['estado'] = $estadosMap[$validated['estado']] ?? 'pendiente';
-
-        $estadoNuevo = $validated['estado'];
-        $estadoAnterior = $reporte->estado;
+        $estadoNuevoId = $validated['estado_id'];
+        $estadoAnteriorId = $reporte->estado_id;
         $changes = [];
         $updatesPendientes = [];
 
@@ -141,12 +139,12 @@ class ReporteAdminController extends Controller
             }
         }
 
-        if ($estadoNuevo !== $estadoAnterior) {
-            $changes['estado'] = [
-                'old' => $estadoAnterior,
-                'new' => $estadoNuevo,
+        if ($estadoNuevoId !== $estadoAnteriorId) {
+            $changes['estado_id'] = [
+                'old' => $estadoAnteriorId,
+                'new' => $estadoNuevoId,
             ];
-            $reporte->cambiarEstado($estadoNuevo);
+            $reporte->cambiarEstado($estadoNuevoId);
         }
 
         foreach ($updatesPendientes as $update) {

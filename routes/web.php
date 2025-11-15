@@ -65,9 +65,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // Rutas de administración (protegidas)
 Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/powerbi', function () {
-        return view('powerbi');
-    });
 
     // Gestión de reportes
     Route::get('/reportes', [ReporteAdminController::class, 'index'])->name('reportes.index');

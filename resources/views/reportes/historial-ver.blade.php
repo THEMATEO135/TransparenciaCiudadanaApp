@@ -93,12 +93,12 @@
                             <td>{{ $reporte->proveedor->nombre ?? 'N/A' }}</td>
                             <td>{{ Str::limit($reporte->descripcion, 50) }}</td>
                             <td>
-                                @if($reporte->estado == 'pendiente')
-                                    <span class="badge" style="background: #f39c12; color: white;">⏳ Pendiente</span>
-                                @elseif($reporte->estado == 'en_proceso')
-                                    <span class="badge" style="background: #3498db; color: white;">🔄 En Proceso</span>
+                                @if($reporte->estado)
+                                    <span class="badge" style="background-color: {{ $reporte->estado->color }}; color: white;">
+                                        {{ $reporte->estado->icono }} {{ $reporte->estado->etiqueta }}
+                                    </span>
                                 @else
-                                    <span class="badge" style="background: #27ae60; color: white;">✅ Resuelto</span>
+                                    <span class="badge" style="background: #6c757d; color: white;">Sin estado</span>
                                 @endif
                             </td>
                             <td>{{ $reporte->created_at->format('d/m/Y H:i') }}</td>

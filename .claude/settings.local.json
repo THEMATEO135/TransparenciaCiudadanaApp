@@ -17,7 +17,11 @@
       "Bash(python:*)",
       "Bash(mkdir:*)",
       "Bash(C:xamppphpphp.exe artisan serve)",
-      "Bash(setx PATH \"%PATH%;C:\\xampp\\php\")"
+      "Bash(setx PATH \"%PATH%;C:\\xampp\\php\")",
+      "Bash(if [ ! -f \"database/seeders/PlantillasRespuestaSeeder.php\" ])",
+      "Bash(then touch \"database/seeders/PlantillasRespuestaSeeder.php\")",
+      "Bash(composer dump-autoload:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []

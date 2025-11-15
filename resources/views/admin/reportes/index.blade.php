@@ -33,12 +33,12 @@
         <div class="stat-card" role="article" aria-labelledby="stat-pendientes-index">
             <span class="stat-icon" aria-hidden="true">⏳</span>
             <div class="stat-label" id="stat-pendientes-index">Pendientes</div>
-            <div class="stat-value" aria-label="Reportes pendientes: {{ $reportes->where('estado', 'pendiente')->count() }}">{{ $reportes->where('estado', 'pendiente')->count() }}</div>
+            <div class="stat-value" aria-label="Reportes pendientes: {{ $totalPendientes }}">{{ $totalPendientes }}</div>
         </div>
         <div class="stat-card" role="article" aria-labelledby="stat-resueltos-index">
             <span class="stat-icon" aria-hidden="true">✅</span>
             <div class="stat-label" id="stat-resueltos-index">Resueltos</div>
-            <div class="stat-value" aria-label="Reportes resueltos: {{ $reportes->where('estado', 'resuelto')->count() }}">{{ $reportes->where('estado', 'resuelto')->count() }}</div>
+            <div class="stat-value" aria-label="Reportes resueltos: {{ $totalResueltos }}">{{ $totalResueltos }}</div>
         </div>
         <div class="stat-card" role="article" aria-labelledby="stat-pagina-index">
             <span class="stat-icon" aria-hidden="true">📄</span>
@@ -76,14 +76,12 @@
                         </td>
                         <td>{{ Str::limit($reporte->descripcion, 60) }}</td>
                         <td>
-                            @if($reporte->estado == 'pendiente')
-                                <span class="badge badge-warning">⏳ Pendiente</span>
-                            @elseif($reporte->estado == 'resuelto')
-                                <span class="badge badge-success">✅ Resuelto</span>
-                            @elseif($reporte->estado == 'en_proceso')
-                                <span class="badge badge-info">🔄 En Proceso</span>
+                            @if($reporte->estado)
+                                <span class="badge" style="background-color: {{ $reporte->estado->color }}; color: white;">
+                                    {{ $reporte->estado->icono }} {{ $reporte->estado->etiqueta }}
+                                </span>
                             @else
-                                <span class="badge badge-secondary">{{ ucfirst(str_replace('_', ' ', $reporte->estado ?? 'Sin estado')) }}</span>
+                                <span class="badge badge-secondary">Sin estado</span>
                             @endif
                         </td>
                         <td>

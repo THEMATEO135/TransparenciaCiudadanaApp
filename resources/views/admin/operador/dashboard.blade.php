@@ -217,9 +217,13 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge bg-{{ $reporte->color_estado }}">
-                                    {{ ucfirst(str_replace('_', ' ', $reporte->estado)) }}
-                                </span>
+                                @if($reporte->estado)
+                                    <span class="badge" style="background-color: {{ $reporte->estado->color }}; color: white;">
+                                        {{ $reporte->estado->icono }} {{ $reporte->estado->etiqueta }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">Sin estado</span>
+                                @endif
                             </td>
                             <td>
                                 <small>{{ $reporte->created_at->format('d/m/Y H:i') }}</small>
@@ -228,7 +232,7 @@
                                 <a href="{{ route('admin.reportes.edit', $reporte->id) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @if($reporte->estado === 'asignado')
+                                @if($reporte->estado && $reporte->estado->nombre === 'asignado')
                                 <button class="btn btn-sm btn-success" onclick="aceptarReporte({{ $reporte->id }})">
                                     <i class="fas fa-check"></i> Aceptar
                                 </button>

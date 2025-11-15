@@ -43,19 +43,16 @@
             <!-- Columna Izquierda -->
             <div class="col-lg-6">
                 <div class="form-group">
-                    <label for="estado" class="form-label">
+                    <label for="estado_id" class="form-label">
                         <span style="color: var(--primary-color);" aria-hidden="true">📊</span> Estado del Reporte
                     </label>
-                    <select name="estado" id="estado" class="form-select" required aria-required="true">
-                        <option value="Pendiente" {{ $reporte->estado == 'pendiente' ? 'selected' : '' }}>
-                            ⏳ Pendiente
-                        </option>
-                        <option value="En Proceso" {{ $reporte->estado == 'en_proceso' ? 'selected' : '' }}>
-                            🔄 En Proceso
-                        </option>
-                        <option value="Resuelto" {{ $reporte->estado == 'resuelto' ? 'selected' : '' }}>
-                            ✅ Resuelto
-                        </option>
+                    <select name="estado_id" id="estado_id" class="form-select" required aria-required="true">
+                        @foreach($estados as $estado)
+                            <option value="{{ $estado->id }}"
+                                    {{ $reporte->estado_id == $estado->id ? 'selected' : '' }}>
+                                {{ $estado->icono }} {{ $estado->etiqueta }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 

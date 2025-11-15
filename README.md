@@ -13,7 +13,3 @@ Plataforma Laravel para reportar fallas en servicios públicos.
 ## Webhook N8n
 
 Configura la URL en ReporteController.php
-
-## Power BI
-
-Conéctate directamente a la base de datos PostgreSQL.
