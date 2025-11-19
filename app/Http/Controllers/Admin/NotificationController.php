@@ -10,11 +10,19 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = auth()->user()->notifications()
-            ->orderBy('created_at', 'DESC')
-            ->paginate(20);
+        $query = auth()->user()->notifications()
+            ->orderBy('created_at', 'DESC');
 
-        return response()->json($notifications);
+        // Filtro para mostrar solo no leídas
+        if (request('filter') == 'unread') {
+            $query->where('read', false);
+        }
+
+        $notifications = $query->paginate(20);
+        $unreadCount = auth()->user()->notifications()->where('read', false)->count();
+        $total = auth()->user()->notifications()->count();
+
+        return view('admin.notifications.index', compact('notifications', 'unreadCount', 'total'));
     }
 
     public function unread()
