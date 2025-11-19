@@ -684,23 +684,8 @@ function renderDepartamentos(departamentos) {
                     if (locationStatus) locationStatus.style.color = 'var(--success-color)';
                     if (locationStatusText) locationStatusText.textContent = 'Ubicación obtenida correctamente.';
 
-                    // Validar coordenadas vs ciudad
-                    if (DOM.ciudadInput.value) {
-                        const esValida = validarCoordenadas(
-                            parseFloat(coords.latitude),
-                            parseFloat(coords.longitude),
-                            parseInt(DOM.ciudadInput.value)
-                        );
-
-                        if (!esValida) {
-                            mostrarAlertaUbicacion();
-                            DOM.submitBtn.classList.remove('loading');
-                            DOM.submitBtn.disabled = false;
-                            DOM.result.textContent = 'Por favor, verifica tu ubicación en el mapa antes de enviar.';
-                            DOM.result.className = 'result-message error show';
-                            return;
-                        }
-                    }
+                    // Validación de coordenadas vs ciudad desactivada
+                    // Se permite cualquier ubicación independiente de la ciudad seleccionada
 
                     setTimeout(() => submitFormData(), 500);
                     return;
@@ -715,20 +700,9 @@ function renderDepartamentos(departamentos) {
                     DOM.result.className = 'result-message error show';
                     return;
                 }
-            } else {
-                // Validar coordenadas existentes vs ciudad
-                if (DOM.ciudadInput.value) {
-                    const esValida = validarCoordenadas(
-                        parseFloat(DOM.latInput.value),
-                        parseFloat(DOM.lngInput.value),
-                        parseInt(DOM.ciudadInput.value)
-                    );
-
-                    if (!esValida) {
-                        mostrarAlertaUbicacion();
-                    }
-                }
             }
+            // Validación de coordenadas vs ciudad desactivada
+            // Se permite cualquier ubicación independiente de la ciudad seleccionada
 
             submitFormData();
         });

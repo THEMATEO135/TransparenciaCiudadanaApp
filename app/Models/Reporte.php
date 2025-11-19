@@ -224,10 +224,13 @@ class Reporte extends Model
         $duplicadosCount = $this->duplicados_count;
 
         // Factor 4: Detectar reportes similares en zona
+        // Obtener IDs de estados finales
+        $estadosFinales = Estado::where('es_estado_final', true)->pluck('id')->toArray();
+
         $similares = static::where('servicio_id', $this->servicio_id)
             ->where('id', '!=', $this->id)
             ->where('created_at', '>=', now()->subHours(2))
-            ->whereNotIn('estado', ['resuelto', 'cerrado'])
+            ->whereNotIn('estado_id', $estadosFinales)
             ->when($this->latitude && $this->longitude, function($q) {
                 $q->porZona($this->latitude, $this->longitude, 0.5);
             })

@@ -1,0 +1,186 @@
+{
+  "ejemplos_payloads": {
+    "reporte_nuevo": {
+      "event_type": "reporte_nuevo",
+      "timestamp": "2025-11-19T15:30:00.000000Z",
+      "source": "laravel_app",
+      "app_name": "Laravel",
+      "reporte_id": 123,
+      "nombres": "Juan Pérez García",
+      "correo": "juan.perez@example.com",
+      "telefono": "+573001234567",
+      "descripcion": "Hay un hueco grande en la vía principal que está causando problemas a los vehículos",
+      "direccion": "Calle 45 # 23-56",
+      "localidad": "Usaquén",
+      "barrio": "Santa Bárbara",
+      "estado": "pendiente",
+      "prioridad": "alta",
+      "latitude": 4.7110,
+      "longitude": -74.0721,
+      "imagenes": [
+        "https://example.com/uploads/reporte-123-img1.jpg",
+        "https://example.com/uploads/reporte-123-img2.jpg"
+      ],
+      "created_at_formatted": "2025-11-19 10:30:00",
+      "servicio": {
+        "id": 1,
+        "nombre": "Infraestructura vial",
+        "descripcion": "Problemas relacionados con vías, calles, puentes"
+      },
+      "ciudad": {
+        "id": 1,
+        "nombre": "Bogotá"
+      },
+      "proveedor": {
+        "id": 5,
+        "nombre": "IDU - Instituto de Desarrollo Urbano"
+      }
+    },
+    "actualizacion_estado": {
+      "event_type": "actualizacion_estado",
+      "timestamp": "2025-11-19T16:45:00.000000Z",
+      "source": "laravel_app",
+      "app_name": "Laravel",
+      "reporte_id": 123,
+      "estado_anterior": {
+        "id": 1,
+        "nombre": "Pendiente"
+      },
+      "estado_nuevo": {
+        "id": 2,
+        "nombre": "En Proceso"
+      },
+      "cambios": {
+        "estado_id": {
+          "old": 1,
+          "new": 2
+        }
+      },
+      "actualizado_por": {
+        "id": 5,
+        "nombre": "María González"
+      },
+      "updated_at_formatted": "2025-11-19 11:45:00",
+      "reporte": {
+        "id": 123,
+        "nombres": "Juan Pérez García",
+        "correo": "juan.perez@example.com",
+        "descripcion": "Hay un hueco grande en la vía principal",
+        "prioridad": "alta",
+        "direccion": "Calle 45 # 23-56"
+      }
+    },
+    "comentario": {
+      "event_type": "comentario",
+      "timestamp": "2025-11-19T17:15:00.000000Z",
+      "source": "laravel_app",
+      "app_name": "Laravel",
+      "reporte_id": 123,
+      "comentario_id": 456,
+      "contenido": "Quisiera saber cuándo van a reparar este hueco. Ya han pasado varios días y sigue igual.",
+      "autor_tipo": "ciudadano",
+      "correo": "juan.perez@example.com",
+      "created_at_formatted": "2025-11-19 12:15:00",
+      "reporte": {
+        "id": 123,
+        "nombres": "Juan Pérez García",
+        "descripcion": "Hay un hueco grande en la vía principal",
+        "estado": "en_proceso",
+        "prioridad": "alta"
+      }
+    },
+    "feedback": {
+      "event_type": "feedback",
+      "timestamp": "2025-11-19T18:30:00.000000Z",
+      "source": "laravel_app",
+      "app_name": "Laravel",
+      "feedback_id": 789,
+      "reporte_id": 123,
+      "resuelto": true,
+      "calificacion": 5,
+      "nps": 9,
+      "comentario": "Excelente servicio, repararon el hueco rápidamente y quedó muy bien",
+      "respondido_at_formatted": "2025-11-19 13:30:00",
+      "reporte": {
+        "id": 123,
+        "nombres": "Juan Pérez García",
+        "correo": "juan.perez@example.com",
+        "descripcion": "Hay un hueco grande en la vía principal",
+        "estado": "cerrado",
+        "prioridad": "alta"
+      },
+      "categoria_nps": "promotor"
+    },
+    "test": {
+      "event_type": "test",
+      "timestamp": "2025-11-19T14:00:00.000000Z",
+      "source": "laravel_app",
+      "app_name": "Laravel",
+      "test": true,
+      "message": "Prueba de conectividad del webhook n8n",
+      "webhook_url": "https://primary-production-0845.up.railway.app/webhook-test/9bf08527-7c30-4680-be8a-fd53c4c1a124"
+    }
+  },
+  "notas": {
+    "event_types": [
+      "reporte_nuevo",
+      "actualizacion_estado",
+      "comentario",
+      "feedback",
+      "test"
+    ],
+    "campos_comunes": [
+      "event_type: Tipo de evento que se disparó",
+      "timestamp: Fecha y hora ISO 8601 del evento",
+      "source: Siempre 'laravel_app'",
+      "app_name: Nombre de la aplicación configurado en Laravel"
+    ],
+    "categorias_nps": {
+      "promotor": "NPS >= 9 (Clientes muy satisfechos)",
+      "pasivo": "NPS entre 7 y 8 (Clientes neutrales)",
+      "detractor": "NPS < 7 (Clientes insatisfechos)"
+    },
+    "estados_reporte": [
+      "pendiente",
+      "en_proceso",
+      "resuelto",
+      "cerrado",
+      "reabierto",
+      "rechazado"
+    ],
+    "prioridades_reporte": [
+      "baja",
+      "media",
+      "alta",
+      "critica"
+    ]
+  },
+  "uso_en_n8n": {
+    "acceder_campos": {
+      "descripcion": "En n8n, accede a los campos usando {{$json.campo}}",
+      "ejemplos": [
+        "{{$json.event_type}} - Tipo de evento",
+        "{{$json.reporte_id}} - ID del reporte",
+        "{{$json.nombres}} - Nombre del ciudadano",
+        "{{$json.servicio.nombre}} - Nombre del servicio",
+        "{{$json.estado_nuevo.nombre}} - Nombre del estado nuevo"
+      ]
+    },
+    "condicionales": {
+      "descripcion": "Usa expresiones para crear lógica condicional",
+      "ejemplos": [
+        "{{$json.prioridad === 'alta' ? 'URGENTE' : 'Normal'}}",
+        "{{$json.resuelto ? '✅ Resuelto' : '❌ No resuelto'}}",
+        "{{$json.nps >= 9 ? 'Promotor' : 'Otro'}}"
+      ]
+    },
+    "formateo": {
+      "descripcion": "Formatea fechas y números",
+      "ejemplos": [
+        "{{DateTime.fromISO($json.timestamp).toFormat('dd/MM/yyyy HH:mm')}}",
+        "{{$json.calificacion}}/5 estrellas",
+        "Prioridad: {{$json.prioridad.toUpperCase()}}"
+      ]
+    }
+  }
+}

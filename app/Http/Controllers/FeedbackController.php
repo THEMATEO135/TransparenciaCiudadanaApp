@@ -75,6 +75,27 @@ class FeedbackController extends Controller
             );
         }
 
+        // Enviar webhook a n8n con el feedback
+        $payload = [
+            'feedback_id' => $feedback->id,
+            'reporte_id' => $reporte->id,
+            'resuelto' => $validated['resuelto'],
+            'calificacion' => $validated['calificacion'],
+            'nps' => $validated['nps'],
+            'comentario' => $validated['comentario'] ?? null,
+            'respondido_at_formatted' => $feedback->respondido_at->format('Y-m-d H:i:s'),
+            'reporte' => [
+                'id' => $reporte->id,
+                'nombres' => $reporte->nombres,
+                'correo' => $reporte->correo,
+                'descripcion' => $reporte->descripcion,
+                'estado' => $reporte->estado,
+                'prioridad' => $reporte->prioridad,
+            ],
+            'categoria_nps' => $validated['nps'] >= 9 ? 'promotor' : ($validated['nps'] >= 7 ? 'pasivo' : 'detractor'),
+        ];
+        \App\Jobs\SendReportToN8n::dispatch($payload, 'feedback');
+
         return view('reportes.feedback-gracias', [
             'reporte' => $reporte,
             'feedback' => $feedback

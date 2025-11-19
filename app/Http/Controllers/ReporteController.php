@@ -48,9 +48,17 @@ class ReporteController extends Controller
                 );
             }
 
+            // Obtener el estado "pendiente" por defecto
+            $estadoPendiente = \App\Models\Estado::where('nombre', 'pendiente')->first();
+            if (!$estadoPendiente) {
+                // Si no existe, buscar el primer estado activo
+                $estadoPendiente = \App\Models\Estado::where('activo', true)->orderBy('orden')->first();
+            }
+
             // Crear el reporte
             $reporte = Reporte::create(array_merge($validated, [
-                'imagenes' => $imagenesUrls
+                'imagenes' => $imagenesUrls,
+                'estado_id' => $estadoPendiente ? $estadoPendiente->id : 1, // 1 como fallback
             ]));
             Log::info('Reporte creado exitosamente', ['id' => $reporte->id]);
 
@@ -84,17 +92,40 @@ class ReporteController extends Controller
             \Cache::forget('dashboard_reportes_por_servicio');
 
             // Preparar payload con datos adicionales
-            $payload = array_merge($reporte->toArray(), [
+            $payload = [
+                'reporte_id' => $reporte->id,
+                'nombres' => $reporte->nombres,
+                'correo' => $reporte->correo,
+                'telefono' => $reporte->telefono,
+                'descripcion' => $reporte->descripcion,
+                'direccion' => $reporte->direccion,
+                'localidad' => $reporte->localidad,
+                'barrio' => $reporte->barrio,
+                'estado' => $reporte->estado,
+                'prioridad' => $reporte->prioridad,
+                'latitude' => $reporte->latitude,
+                'longitude' => $reporte->longitude,
+                'imagenes' => $reporte->imagenes,
                 'created_at_formatted' => $reporte->created_at->format('Y-m-d H:i:s'),
-                'servicio' => $reporte->servicio ? $reporte->servicio->toArray() : null,
-                'timestamp' => now()->timestamp,
-                'source' => 'laravel_app'
-            ]);
-            
-            Log::info('Payload preparado para webhook', $payload);
+                'servicio' => $reporte->servicio ? [
+                    'id' => $reporte->servicio->id,
+                    'nombre' => $reporte->servicio->nombre,
+                    'descripcion' => $reporte->servicio->descripcion
+                ] : null,
+                'ciudad' => $reporte->ciudad ? [
+                    'id' => $reporte->ciudad->id,
+                    'nombre' => $reporte->ciudad->nombre
+                ] : null,
+                'proveedor' => $reporte->proveedor ? [
+                    'id' => $reporte->proveedor->id,
+                    'nombre' => $reporte->proveedor->nombre
+                ] : null,
+            ];
 
-            // Enviar webhook
-            $this->sendWebhook($payload);
+            Log::info('Enviando reporte nuevo a n8n via Job', ['reporte_id' => $reporte->id]);
+
+            // Enviar webhook via Job
+            \App\Jobs\SendReportToN8n::dispatch($payload, 'reporte_nuevo');
 
             return response()->json([
                 'ok' => true,
@@ -228,22 +259,28 @@ class ReporteController extends Controller
     }
 
     /**
-     * Método para probar la conectividad del webhook
+     * Método para probar la conectividad del webhook n8n
      */
     public function testWebhook()
     {
         $testPayload = [
             'test' => true,
             'timestamp' => now()->toISOString(),
-            'message' => 'Prueba de conectividad del webhook',
-            'source' => 'laravel_test'
+            'message' => 'Prueba de conectividad del webhook n8n',
+            'source' => 'laravel_test',
+            'webhook_url' => env('WEBHOOK_URL'),
         ];
 
-        Log::info('Iniciando prueba de webhook');
-        $this->sendWebhook($testPayload);
-        
+        Log::info('Iniciando prueba de webhook n8n');
+
+        // Enviar webhook usando el Job
+        \App\Jobs\SendReportToN8n::dispatch($testPayload, 'test');
+
         return response()->json([
-            'message' => 'Prueba de webhook enviada. Revisa los logs para ver el resultado.'
+            'success' => true,
+            'message' => 'Webhook de prueba enviado a n8n. El Job fue encolado y se procesará en breve.',
+            'webhook_url' => env('WEBHOOK_URL'),
+            'note' => 'Revisa los logs de Laravel (storage/logs/laravel.log) y n8n para verificar la recepción.'
         ]);
     }
 
@@ -320,6 +357,24 @@ class ReporteController extends Controller
                 route('admin.reportes.edit', $reporte->id)
             );
         }
+
+        // Enviar webhook a n8n
+        $payload = [
+            'reporte_id' => $reporte->id,
+            'comentario_id' => $update->id,
+            'contenido' => $validated['contenido'],
+            'autor_tipo' => 'ciudadano',
+            'correo' => $validated['correo'],
+            'created_at_formatted' => $update->created_at->format('Y-m-d H:i:s'),
+            'reporte' => [
+                'id' => $reporte->id,
+                'nombres' => $reporte->nombres,
+                'descripcion' => $reporte->descripcion,
+                'estado' => $reporte->estado,
+                'prioridad' => $reporte->prioridad,
+            ]
+        ];
+        \App\Jobs\SendReportToN8n::dispatch($payload, 'comentario');
 
         return response()->json([
             'ok' => true,

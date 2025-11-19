@@ -294,7 +294,8 @@
         </div>
     </div>
 
-    <!-- Alerta de ubicación -->
+    <!-- Alerta de ubicación DESACTIVADA - Validación removida -->
+    <!--
     <div id="locationAlert" class="location-alert">
         <div class="alert-content">
             <i class="fas fa-exclamation-triangle"></i>
@@ -307,6 +308,7 @@
             </button>
         </div>
     </div>
+    -->
 
     <!-- Tus scripts -->
     <!-- Leaflet JS para el mapa -->

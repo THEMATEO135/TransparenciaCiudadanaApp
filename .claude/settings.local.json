@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan cache:clear:*)",
+      "Bash(php artisan config:clear:*)",
+      "Bash(php artisan:*)",
+      "Bash(php artisan view:clear:*)",
+      "Bash(php artisan optimize:clear:*)",
+      "Bash(if not exist \"bootstrap\\cache\" mkdir \"bootstrap\\cache\")",
+      "Bash(echo:*)",
+      "Bash(\"bootstrap\\cache\\.gitignore\")",
+      "Bash(chmod:*)",
+      "Bash(icacls:*)",
+      "Bash(if exist \"bootstrap\\cache\\config.php\" del \"bootstrap\\cache\\config.php\")",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

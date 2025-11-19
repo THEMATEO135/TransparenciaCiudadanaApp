@@ -156,6 +156,40 @@ class ReporteAdminController extends Controller
             );
         }
 
+        // Enviar webhook a n8n si hubo cambio de estado
+        if (isset($changes['estado_id'])) {
+            $estadoNuevo = \App\Models\Estado::find($estadoNuevoId);
+            $estadoAnterior = \App\Models\Estado::find($estadoAnteriorId);
+
+            $payload = [
+                'reporte_id' => $reporte->id,
+                'estado_anterior' => [
+                    'id' => $estadoAnteriorId,
+                    'nombre' => $estadoAnterior ? $estadoAnterior->nombre : null,
+                ],
+                'estado_nuevo' => [
+                    'id' => $estadoNuevoId,
+                    'nombre' => $estadoNuevo ? $estadoNuevo->nombre : null,
+                ],
+                'cambios' => $changes,
+                'actualizado_por' => [
+                    'id' => auth()->id(),
+                    'nombre' => auth()->user()->name ?? auth()->user()->email,
+                ],
+                'updated_at_formatted' => now()->format('Y-m-d H:i:s'),
+                'reporte' => [
+                    'id' => $reporte->id,
+                    'nombres' => $reporte->nombres,
+                    'correo' => $reporte->correo,
+                    'descripcion' => $reporte->descripcion,
+                    'prioridad' => $reporte->prioridad,
+                    'direccion' => $reporte->direccion,
+                ]
+            ];
+
+            \App\Jobs\SendReportToN8n::dispatch($payload, 'actualizacion_estado');
+        }
+
         // Invalidar cache de estadísticas del dashboard
         \Cache::forget('dashboard_stats');
         \Cache::forget('dashboard_comparativa_mensual');
@@ -208,7 +242,7 @@ class ReporteAdminController extends Controller
             $query->where('servicio_id', $request->servicio_id);
         }
         if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+            $query->porEstado($request->estado);
         }
 
         $reportes = $query->orderBy('created_at', 'DESC')->get();
@@ -243,7 +277,7 @@ class ReporteAdminController extends Controller
             $query->where('servicio_id', $request->servicio_id);
         }
         if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+            $query->porEstado($request->estado);
         }
 
         $reportes = $query->orderBy('created_at', 'DESC')->get();

@@ -115,3 +115,6 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
     // API para actualizaciones en tiempo real
     Route::get('/dashboard/stats', [DashboardStatsController::class, 'stats'])->name('dashboard.stats');
 });
+
+// Ruta de prueba para webhook n8n (puedes comentar en producción)
+Route::get('/test-webhook', [ReporteController::class, 'testWebhook'])->name('test.webhook');
